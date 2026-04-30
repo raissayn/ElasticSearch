@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Explicacao do Backend Python</title>
+    <style>
+      :root {
+        --bg: #f3efe7;
+        --panel: #fffaf2;
+        --text: #1f2933;
+        --accent: #a63d40;
+        --line: #d9c9b4;
+      }
+
+      body {
+        margin: 0;
+        font-family: Georgia, "Times New Roman", serif;
+        background: linear-gradient(180deg, #f7f2ea 0%, #efe5d4 100%);
+        color: var(--text);
+      }
+
+      main {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 40px 20px 64px;
+      }
+
+      section {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 20px;
+        box-shadow: 0 10px 30px rgba(31, 41, 51, 0.06);
+      }
+
+      h1, h2 {
+        color: var(--accent);
+      }
+
+      code, pre {
+        font-family: "Courier New", monospace;
+      }
+
+      pre {
+        background: #2d2a26;
+        color: #f9f5ef;
+        padding: 16px;
+        border-radius: 12px;
+        overflow-x: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section>
+        <h1>Conversao do Backend Java para Python</h1>
+        <p>O objetivo foi manter a mesma ideia do backend Java em uma nova pasta Python, para facilitar comparacao e estudo.</p>
+      </section>
+
+      <section>
+        <h2>Ideia do backend</h2>
+        <p>A API recebe uma consulta no endpoint <code>GET /v1/search</code>, envia essa consulta ao Elasticsearch, pega os documentos encontrados no indice <code>wikipedia</code> e devolve uma lista com <code>title</code>, <code>url</code> e <code>abs</code>.</p>
+      </section>
+
+      <section>
+        <h2>Estrutura de pastas</h2>
+        <pre>python_backend/
+  app/
+    main.py
+    controllers/search_controller.py
+    services/search_service.py
+    domain/es_client.py
+    schemas/result.py
+    core/config.py
+  tests/
+  docs/backend_explicacao.html</pre>
+      </section>
+
+      <section>
+        <h2>Explicacao de cada arquivo</h2>
+        <p><code>main.py</code> cria a aplicacao FastAPI.</p>
+        <p><code>search_controller.py</code> define a rota HTTP.</p>
+        <p><code>search_service.py</code> concentra a regra de negocio e a limpeza do texto.</p>
+        <p><code>es_client.py</code> faz a conexao com o Elasticsearch e monta a busca.</p>
+        <p><code>result.py</code> define o formato da resposta.</p>
+        <p><code>config.py</code> guarda as configuracoes centrais do backend.</p>
+      </section>
+
+      <section>
+        <h2>Fluxo da requisicao</h2>
+        <ol>
+          <li>O usuario chama <code>/v1/search?query=...&page=...</code>.</li>
+          <li>O controller recebe os parametros.</li>
+          <li>O service chama o cliente do Elasticsearch.</li>
+          <li>O cliente busca no indice <code>wikipedia</code> usando o campo <code>content</code>.</li>
+          <li>O service limpa o conteudo e monta os objetos finais.</li>
+          <li>A API devolve uma lista JSON.</li>
+        </ol>
+      </section>
+
+      <section>
+        <h2>Como a limpeza funciona</h2>
+        <p>O metodo <code>treat_content</code> remove tags como <code>&lt;som1&gt;</code> e <code>&lt;math3&gt;</code>, tira caracteres especiais e normaliza os espacos. Isso segue a mesma ideia do backend Java.</p>
+      </section>
+
+      <section>
+        <h2>Como executar</h2>
+        <pre>cd python_backend
+.venv/bin/pip install -r requirements.txt
+.venv/bin/uvicorn app.main:app --reload --port 8080</pre>
+        <p>Depois, acesse <code>http://127.0.0.1:8080/docs</code> para ver a documentacao automatica do FastAPI.</p>
+      </section>
+    </main>
+  </body>
+</html>
