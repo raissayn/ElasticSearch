@@ -18,7 +18,34 @@ class EsClient:
             index=settings.index_name,
             from_=from_,
             size=settings.page_size,
-            query={"match": {settings.search_field: query}},
+            query={
+                "multi_match": {
+                    "query": query,
+                    "fields": list(settings.boosted_search_fields),
+                    "type": "best_fields",
+                }
+            },
+            highlight={
+                "fields": {
+                    "content": {"number_of_fragments": 1},
+                    "summary": {"number_of_fragments": 1},
+                }
+            },
         )
         hits = response.get("hits", {}).get("hits", [])
-        return [hit.get("_source", {}) for hit in hits]
+        documents: list[dict] = []
+        for hit in hits:
+            source = hit.get("_source", {})
+            highlight = hit.get("highlight", {})
+            snippet = ""
+            if highlight.get("content"):
+                snippet = " ".join(highlight["content"])
+            elif highlight.get("summary"):
+                snippet = " ".join(highlight["summary"])
+
+            document = dict(source)
+            if snippet:
+                document["_snippet"] = snippet
+            documents.append(document)
+
+        return documents
