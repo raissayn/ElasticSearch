@@ -7,7 +7,16 @@ class FakeElasticsearch:
 
     def search(self, **kwargs):
         self.last_kwargs = kwargs
-        return {"hits": {"hits": [{"_source": {"title": "A", "url": "u", "content": "c"}}]}}
+        return {
+            "hits": {
+                "hits": [
+                    {
+                        "_source": {"title": "A", "url": "u", "content": "c"},
+                        "highlight": {"content": ["Resumo <em>c</em>"]},
+                    }
+                ]
+            }
+        }
 
 
 def test_search_uses_expected_index_query_and_pagination():
@@ -16,8 +25,10 @@ def test_search_uses_expected_index_query_and_pagination():
 
     documents = es_client.search("python", 3)
 
-    assert fake_client.last_kwargs["index"] == "wikipedia"
+    assert fake_client.last_kwargs["index"] == "unisearch_documentos"
     assert fake_client.last_kwargs["from_"] == 20
     assert fake_client.last_kwargs["size"] == 10
-    assert fake_client.last_kwargs["query"] == {"match": {"content": "python"}}
-    assert documents == [{"title": "A", "url": "u", "content": "c"}]
+    assert fake_client.last_kwargs["query"]["multi_match"]["query"] == "python"
+    assert "searchable_text" in fake_client.last_kwargs["query"]["multi_match"]["fields"]
+    assert "highlight" in fake_client.last_kwargs
+    assert documents == [{"title": "A", "url": "u", "content": "c", "_snippet": "Resumo <em>c</em>"}]
