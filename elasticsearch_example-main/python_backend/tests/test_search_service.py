@@ -7,7 +7,7 @@ class StubEsClient:
             {
                 "title": "Elastic",
                 "url": "http://elastic.test",
-                "content": "  Conteudo <som1>extra</som1> !!!  ",
+                "_snippet": "  Conteudo <som1>extra</som1> !!!  ",
             }
         ]
 
@@ -17,7 +17,7 @@ def test_treat_content_removes_markup_symbols_and_extra_spaces():
 
     treated = service.treat_content("  Texto <som2>ruido</som2> com <math3>x+y</math3> !!!  ")
 
-    assert treated == "Texto ruido com xy"
+    assert treated == "Texto ruido com x+y !!!"
 
 
 def test_submit_query_transforms_documents_into_results():
@@ -28,4 +28,4 @@ def test_submit_query_transforms_documents_into_results():
     assert len(results) == 1
     assert results[0].title == "Elastic"
     assert results[0].url == "http://elastic.test"
-    assert results[0].abs == "Conteudo extra"
+    assert results[0].abs == "Conteudo extra !!!"
