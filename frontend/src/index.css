@@ -1,0 +1,60 @@
+@import url('https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-surface text-on-surface font-sans;
+  }
+}
+
+@layer utilities {
+  .glass-container {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+  }
+  .glass-card-h {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, background 0.2s ease;
+  }
+  .glass-card-h:hover {
+    transform: translateY(-4px);
+    background: rgba(255, 255, 255, 0.1);
+  }
+  .bg-image-overlay {
+    background-image: linear-gradient(rgba(17, 24, 39, 0.7), rgba(17, 24, 39, 0.8)), url('https://lh3.googleusercontent.com/aida-public/AB6AXuCuTCJzY7i773mPbSaLwsjlJGiJv3z0XVoeoxheSSvP3TahfGQ_01qMFkW_fTOoiNJLr09BSgBZscsW8AfY5iD9ZHLpPm2Fu3RS67EIg9zs20-QNhbGrTLQE6NKrliTQMRY180_G7dv1y8uDSbPbFCIm3yOj1nvgBbQbCB7mPrLPZnBPzuObXOwUtnEpfEbwN0GugZtf6BifWlGcwWijhOsugwRqR5-oin2suQL4InSgjnFvDDzx3BIONAILNYrc-x0iK6JUV3yXQ');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+  }
+  .results-bg {
+    background: radial-gradient(at top left, rgba(236, 91, 19, 0.1), transparent 40%),
+                radial-gradient(at bottom right, rgba(236, 91, 19, 0.05), transparent 40%),
+                #111827;
+  }
+  .glass-card-r {
+    background: rgba(31, 41, 55, 0.55);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+  .glass-border {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-left: 1px solid rgba(255, 255, 255, 0.05);
+  }
+  .glow-shadow {
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  }
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
+}

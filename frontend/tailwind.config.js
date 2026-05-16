@@ -1,0 +1,26 @@
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        primary: '#ec5b13',
+        'primary-dim': '#d04f0e',
+        surface: '#111827',
+        'on-surface': '#f3f4f6',
+        'surface-variant': '#1f2937',
+        'on-surface-variant': '#d1d5db',
+      },
+      fontFamily: {
+        sans: ['"Public Sans"', 'sans-serif'],
+        display: ['"Public Sans"', 'sans-serif'],
+        body: ['"Public Sans"', 'sans-serif'],
+      },
+    },
+  },
+  plugins: [],
+}
