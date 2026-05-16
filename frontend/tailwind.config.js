@@ -8,8 +8,11 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: '#ec5b13',
-        'primary-dim': '#d04f0e',
+        primary: '#07378d',
+        'primary-dim': '#00318a',
+        secondary: '#0fafee',
+        'secondary-dim': '#0d9bdb',
+        'unifal-bg': '#eef7fc',
         surface: '#111827',
         'on-surface': '#f3f4f6',
         'surface-variant': '#1f2937',

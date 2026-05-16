@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import HomePage from './HomePage';
@@ -13,6 +12,6 @@ test('HomePage renders search input', () => {
     </SearchProvider>
   );
 
-  const input = screen.getByPlaceholderText(/O que você procura/i);
+  const input = screen.getByPlaceholderText(/Busque por 'Cálculo I'/i);
   expect(input).toBeDefined();
 });

@@ -1,33 +1,39 @@
-import React from 'react';
-
-const ResultCard = ({ tag, period, course, title, description }) => (
-  <article className="glass-card-r glass-border glow-shadow rounded-lg p-8 group hover:-translate-y-1 transition-all duration-400">
-    <div className="flex justify-between items-start mb-6">
-      <div className="flex items-center gap-4">
-        <div className="px-3 py-1 bg-primary/20 rounded-full border border-primary/30">
-          <span className="text-[10px] font-extrabold text-primary tracking-tighter">{tag}</span>
+const ResultCard = ({ tag, period, course, title, description, time }) => (
+  <article className="bg-white border border-gray-200 rounded-2xl p-5 md:p-6 hover:border-secondary hover:shadow-md transition-all cursor-pointer">
+    <div className="flex justify-between items-start mb-4">
+      <div className="flex items-center gap-3">
+        <div className="w-10 h-10 bg-unifal-bg rounded-full flex shrink-0 items-center justify-center text-primary">
+          <span className="material-symbols-outlined">school</span>
         </div>
-        <span className="text-xs font-medium text-gray-400 uppercase tracking-widest">{period}</span>
-        <span className="text-xs font-bold text-primary-dim uppercase tracking-widest">{course}</span>
+        <span className="font-bold text-gray-900 line-clamp-2 leading-tight">{course}</span>
       </div>
-      <button className="text-gray-500 hover:text-primary transition-colors">
-        <span className="material-symbols-outlined">bookmark</span>
-      </button>
+      <div className="flex items-center gap-2 md:gap-4 shrink-0">
+        <span className="text-xs md:text-sm font-medium text-gray-500">{time}</span>
+        <button type="button" className="text-gray-400 hover:text-primary transition-colors">
+          <span className="material-symbols-outlined font-light">bookmark</span>
+        </button>
+      </div>
     </div>
-    <h3 className="text-2xl font-bold text-white mb-3 tracking-tight group-hover:text-primary transition-colors">{title}</h3>
-    <p className="text-gray-400 leading-relaxed mb-8 max-w-2xl">{description}</p>
     
-    <div className="flex flex-wrap items-center gap-4">
-      <button className="px-6 py-2.5 bg-gray-800/80 backdrop-blur-md border border-gray-600 rounded-full text-sm font-semibold text-white hover:bg-gray-700 transition-all flex items-center gap-2">
-        <span className="material-symbols-outlined text-lg">visibility</span> View PDF
-      </button>
-      <button className="px-6 py-2.5 text-sm font-semibold text-gray-400 hover:text-white transition-all flex items-center gap-2">
-        <span className="material-symbols-outlined text-lg">download</span> Download
-      </button>
-      <button className="ml-auto p-3 text-primary hover:bg-primary/20 rounded-full transition-all flex items-center gap-2 group/btn">
-        <span className="text-xs font-bold uppercase tracking-widest opacity-0 group-hover/btn:opacity-100 transition-opacity">Add to Schedule</span>
-        <span className="material-symbols-outlined">add_circle</span>
-      </button>
+    <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-2">{title}</h3>
+    <p className="text-gray-600 text-sm line-clamp-2 mb-6">{description}</p>
+    
+    <div className="flex flex-wrap items-center gap-y-2 gap-x-3 md:gap-4 text-xs md:text-sm font-medium text-gray-600">
+      <div className="flex items-center gap-1.5">
+        <span className="material-symbols-outlined text-[16px] md:text-[18px]">schedule</span> {period}
+      </div>
+      <div className="hidden md:block w-px h-4 bg-gray-300"></div>
+      <div className="flex items-center gap-1.5">
+        <span className="material-symbols-outlined text-[16px] md:text-[18px]">public</span> Presencial
+      </div>
+      <div className="hidden md:block w-px h-4 bg-gray-300"></div>
+      <div className="flex items-center gap-1.5">
+        <span className="material-symbols-outlined text-[16px] md:text-[18px]">group</span> 40 Alunos
+      </div>
+      <div className="hidden md:block w-px h-4 bg-gray-300"></div>
+      <div className="flex items-center gap-1.5 font-bold text-gray-800">
+        <span className="material-symbols-outlined text-[16px] md:text-[18px] text-gray-400">sell</span> {tag}
+      </div>
     </div>
   </article>
 );
