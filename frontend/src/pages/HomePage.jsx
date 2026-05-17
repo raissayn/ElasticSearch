@@ -16,7 +16,7 @@ const HomePage = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  const categories = ["Tudo", "Documentos", "Dinâmicas Curriculares", "Corpo Docente", "Comissões"];
+  const categories = ["Tudo", "Disciplinas", "Regulamentos", "Professores"];
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -29,8 +29,8 @@ const HomePage = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const performSearch = async (searchQuery, searchSort) => {
-    if (!searchQuery.trim() && category === "Tudo") {
+  const performSearch = async (searchQuery, searchSort, searchCategory = category) => {
+    if (!searchQuery.trim() && searchCategory === "Tudo") {
       setHasSearched(false);
       setResults([]);
       setTotal(0);
@@ -42,11 +42,23 @@ const HomePage = () => {
     setError(null);
 
     try {
+      const categoryMap = {
+        "Tudo": "",
+        "Disciplinas": "disciplina",
+        "Regulamentos": "secao_texto",
+        "Professores": "pessoa"
+      };
+      const tipo = categoryMap[searchCategory] || "";
+
       const params = new URLSearchParams({
         query: searchQuery,
         page: "1",
         sort_by: searchSort,
       });
+      if (tipo) {
+        params.append("tipo", tipo);
+      }
+
       const response = await fetch(`http://localhost:8000/v1/search?${params}`);
       if (!response.ok) {
         throw new Error('Falha ao buscar resultados');
@@ -174,7 +186,13 @@ const HomePage = () => {
                     <div 
                       key={cat}
                       className={`px-5 py-3 hover:bg-unifal-bg transition-colors text-base font-medium ${category === cat ? 'text-primary bg-unifal-bg' : 'text-gray-600'}`}
-                      onClick={() => setCategory(cat)}
+                      onClick={() => {
+                        setCategory(cat);
+                        setIsDropdownOpen(false);
+                        if (query.trim()) {
+                          performSearch(query, sortBy, cat);
+                        }
+                      }}
                     >
                       {cat}
                     </div>
@@ -248,23 +266,8 @@ const HomePage = () => {
                 ) : results.length > 0 ? (
                   results.map((item, index) => (
                     <ResultCard 
-                      key={item.url + index}
-                      url={item.url}
-                      chunkType={item.chunk_type}
-                      disciplineName={item.discipline_name}
-                      period={item.period}
-                      courseName={item.course_name}
-                      summary={item.summary}
-                      title={item.title}
-                      workloadTotal={item.workload_total}
-                      workloadTheoretical={item.workload_theoretical}
-                      workloadPractical={item.workload_practical}
-                      workloadActivity={item.workload_activity}
-                      prerequisites={item.prerequisites}
-                      tags={item.tags}
-                      pageStart={item.page_start}
-                      score={item.score}
-                      maxScore={item.max_score}
+                      key={item.url_documento + index}
+                      {...item}
                     />
                   ))
                 ) : (

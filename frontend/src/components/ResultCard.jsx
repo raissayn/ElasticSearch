@@ -1,28 +1,54 @@
 const ResultCard = ({
-  url,
-  chunkType,
-  disciplineName,
-  period,
-  courseName,
-  summary,
-  title,
-  workloadTotal,
-  workloadTheoretical,
-  workloadPractical,
-  workloadActivity,
-  prerequisites,
+  tipo_conteudo,
+  nome_disciplina,
+  periodo,
+  curso,
+  ementa,
+  conteudo,
+  titulo_documento,
+  titulo_secao,
+  nome_pessoa,
+  cargo,
+  titulacao,
+  area_atuacao,
+  carga_horaria_total,
+  carga_horaria_teorica,
+  carga_horaria_pratica,
+  carga_horaria_atividade,
+  pre_requisitos,
   tags,
-  pageStart,
+  pagina,
+  url_documento,
   score,
-  maxScore,
+  max_score,
 }) => {
-  const isDiscipline = chunkType === "discipline_syllabus";
-  const displayTitle = isDiscipline && disciplineName ? disciplineName : title;
-  const relevancePercent = maxScore > 0 ? Math.round((score / maxScore) * 100) : 0;
+  const isDiscipline = tipo_conteudo === "disciplina";
+  const isSection = tipo_conteudo === "secao_texto";
+  const isPerson = tipo_conteudo === "pessoa";
+
+  // Determine display title
+  let displayTitle = titulo_documento;
+  if (isDiscipline && nome_disciplina) displayTitle = nome_disciplina;
+  if (isSection && titulo_secao) displayTitle = titulo_secao;
+  if (isPerson && nome_pessoa) displayTitle = nome_pessoa;
+
+  // Determine icon
+  let icon = "description";
+  if (isDiscipline) icon = "school";
+  if (isPerson) icon = "person";
+  if (isSection) icon = "article";
+
+  // Determine main body text
+  let bodyText = ementa || conteudo;
+  if (isPerson) {
+      bodyText = [cargo, titulacao, area_atuacao].filter(Boolean).join(" • ");
+  }
+
+  const relevancePercent = max_score > 0 ? Math.round((score / max_score) * 100) : 0;
 
   const handleClick = () => {
-    if (url) {
-      window.open(url, "_blank", "noopener,noreferrer");
+    if (url_documento) {
+      window.open(url_documento, "_blank", "noopener,noreferrer");
     }
   };
 
@@ -36,15 +62,15 @@ const ResultCard = ({
         <div className="flex items-center gap-3 min-w-0">
           <div className="w-10 h-10 bg-unifal-bg rounded-full flex shrink-0 items-center justify-center text-primary">
             <span className="material-symbols-outlined">
-              {isDiscipline ? "school" : "description"}
+              {icon}
             </span>
           </div>
           <div className="min-w-0">
             <span className="font-bold text-gray-900 line-clamp-1 leading-tight block">
-              {courseName || "Documento"}
+              {curso || titulo_documento || "Documento"}
             </span>
-            {period && (
-              <span className="text-xs text-gray-500 font-medium">{period} Período</span>
+            {periodo && (
+              <span className="text-xs text-gray-500 font-medium">{periodo}º Período</span>
             )}
           </div>
         </div>
@@ -75,48 +101,48 @@ const ResultCard = ({
         {displayTitle}
       </h3>
 
-      {/* Ementa / Summary */}
-      {summary && (
+      {/* Body / Summary */}
+      {bodyText && (
         <div className="mb-4">
-          {isDiscipline && (
+          {isDiscipline && ementa && (
             <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">Ementa</span>
           )}
           <p className="text-gray-600 text-sm leading-relaxed line-clamp-3 mt-0.5">
-            {summary}
+            {bodyText}
           </p>
         </div>
       )}
 
       {/* Workload bar (only for disciplines) */}
-      {isDiscipline && workloadTotal && (
+      {isDiscipline && carga_horaria_total && (
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mb-4 text-xs font-medium">
           <div className="flex items-center gap-1.5 text-gray-700">
             <span className="material-symbols-outlined text-[16px]">timer</span>
-            C.H Total: <span className="font-bold text-gray-900">{workloadTotal}h</span>
+            C.H Total: <span className="font-bold text-gray-900">{carga_horaria_total}h</span>
           </div>
-          {workloadTheoretical != null && (
+          {carga_horaria_teorica != null && (
             <div className="flex items-center gap-1 text-gray-600">
-              Teórica: <span className="font-bold text-gray-800">{workloadTheoretical}h</span>
+              Teórica: <span className="font-bold text-gray-800">{carga_horaria_teorica}h</span>
             </div>
           )}
-          {workloadPractical != null && (
+          {carga_horaria_pratica != null && (
             <div className="flex items-center gap-1 text-gray-600">
-              Prática: <span className="font-bold text-gray-800">{workloadPractical}h</span>
+              Prática: <span className="font-bold text-gray-800">{carga_horaria_pratica}h</span>
             </div>
           )}
-          {workloadActivity != null && (
+          {carga_horaria_atividade != null && (
             <div className="flex items-center gap-1 text-gray-600">
-              Atividade: <span className="font-bold text-gray-800">{workloadActivity}h</span>
+              Atividade: <span className="font-bold text-gray-800">{carga_horaria_atividade}h</span>
             </div>
           )}
         </div>
       )}
 
       {/* Prerequisites (only if present) */}
-      {isDiscipline && prerequisites && prerequisites.length > 0 && (
+      {isDiscipline && pre_requisitos && pre_requisitos.length > 0 && (
         <div className="mb-4 text-xs">
           <span className="font-bold text-gray-500 uppercase tracking-wider">Pré-requisitos: </span>
-          <span className="text-gray-700 font-medium">{prerequisites.join(", ")}</span>
+          <span className="text-gray-700 font-medium">{pre_requisitos.join(", ")}</span>
         </div>
       )}
 
@@ -124,7 +150,7 @@ const ResultCard = ({
       <div className="flex flex-wrap items-center gap-y-2 gap-x-3 md:gap-4 text-xs md:text-sm font-medium text-gray-500 pt-3 border-t border-gray-100">
         <div className="flex items-center gap-1.5">
           <span className="material-symbols-outlined text-[16px]">article</span>
-          Página {pageStart}
+          Página {pagina}
         </div>
         <div className="hidden md:block w-px h-4 bg-gray-200"></div>
         {tags && tags.length > 0 && (
