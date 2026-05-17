@@ -9,13 +9,15 @@ class Settings:
     username: str = "elastic"
     password: str = "user123"
     index_name: str = "unisearch_documentos"
-    search_field: str = "searchable_text"
     boosted_search_fields: Tuple[str, ...] = (
-        "searchable_text",
-        "title^2",
-        "section_title^2",
-        "discipline_name^3",
-        "course_name",
+        "conteudo",
+        "ementa",
+        "nome_disciplina^3",
+        "titulo_documento^2",
+        "titulo_secao^2",
+        "nome_pessoa^2",
+        "area_atuacao",
+        "curso",
     )
     page_size: int = 10
     api_prefix: str = "/v1"
