@@ -14,20 +14,30 @@ class EsClient:
             
         self.client = Elasticsearch(**client_kwargs)
 
-    def search(self, query: str, page: int = 1):
+    def search(self, query: str, page: int = 1, sort_by: str = "relevance"):
         page_size = settings.page_size
         from_value = ((page if page else 1) - 1) * page_size
 
-        response = self.client.search(
-            index=settings.index_name,
-            from_=from_value,
-            size=page_size,
-            query={
+        search_kwargs = {
+            "index": settings.index_name,
+            "from_": from_value,
+            "size": page_size,
+            "query": {
                 "multi_match": {
                     "query": query,
-                    "fields": settings.boosted_search_fields
+                    "fields": list(settings.boosted_search_fields),
                 }
-            }
-        )
+            },
+        }
+
+        if sort_by == "recent":
+            search_kwargs["sort"] = [
+                {"ingested_at": {"order": "desc"}},
+                "_score",
+            ]
+            # Ensure _score is still calculated when using custom sort
+            search_kwargs["track_scores"] = True
+
+        response = self.client.search(**search_kwargs)
 
         return response

@@ -1,10 +1,11 @@
+import os
 from dataclasses import dataclass
 from typing import Tuple
 
 
 @dataclass(frozen=True)
 class Settings:
-    host: str = "http://localhost:9200"
+    host: str = os.environ.get("ELASTIC_HOST", "http://localhost:9200")
     username: str = "elastic"
     password: str = "user123"
     index_name: str = "unisearch_documentos"

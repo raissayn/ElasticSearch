@@ -6,8 +6,11 @@ const HomePage = () => {
   const { query, setQuery } = useContext(SearchContext);
   const [hasSearched, setHasSearched] = useState(false);
   const [results, setResults] = useState([]);
+  const [total, setTotal] = useState(0);
+  const [maxScore, setMaxScore] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [sortBy, setSortBy] = useState("relevance");
   
   const [category, setCategory] = useState("Tudo");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -26,37 +29,61 @@ const HomePage = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleSearch = async (e) => {
-    e.preventDefault();
-    if(query.trim() || category !== "Tudo") {
-      setHasSearched(true);
-      setIsLoading(true);
-      setError(null);
-      
-      try {
-        const response = await fetch(`http://localhost:8000/v1/search?query=${encodeURIComponent(query)}&page=1`);
-        if (!response.ok) {
-          throw new Error('Falha ao buscar resultados');
-        }
-        const data = await response.json();
-        setResults(data);
-      } catch (err) {
-        setError(err.message);
-        setResults([]);
-      } finally {
-        setIsLoading(false);
-      }
-    } else {
+  const performSearch = async (searchQuery, searchSort) => {
+    if (!searchQuery.trim() && category === "Tudo") {
       setHasSearched(false);
       setResults([]);
+      setTotal(0);
+      return;
+    }
+
+    setHasSearched(true);
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const params = new URLSearchParams({
+        query: searchQuery,
+        page: "1",
+        sort_by: searchSort,
+      });
+      const response = await fetch(`http://localhost:8000/v1/search?${params}`);
+      if (!response.ok) {
+        throw new Error('Falha ao buscar resultados');
+      }
+      const data = await response.json();
+      setResults(data.results || []);
+      setTotal(data.total || 0);
+      setMaxScore(data.max_score || 0);
+    } catch (err) {
+      setError(err.message);
+      setResults([]);
+      setTotal(0);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    await performSearch(query, sortBy);
+  };
+
+  const handleSortChange = async (newSort) => {
+    setSortBy(newSort);
+    if (hasSearched && query.trim()) {
+      await performSearch(query, newSort);
     }
   };
 
   const handleClear = () => {
     setQuery('');
     setCategory('Tudo');
+    setSortBy('relevance');
     setHasSearched(false);
     setResults([]);
+    setTotal(0);
+    setMaxScore(0);
     setError(null);
   };
 
@@ -197,13 +224,17 @@ const HomePage = () => {
               <div className="flex justify-between items-center mb-6">
                 <p className="text-sm font-medium text-gray-700">
                   {isLoading ? "Buscando..." : (
-                    <><span className="font-bold text-gray-900">{results.length}</span> resultados encontrados</>
+                    <><span className="font-bold text-gray-900">{total}</span> resultados encontrados</>
                   )}
                 </p>
                 <div className="relative hidden md:block">
-                  <select className="appearance-none bg-white border border-gray-300 rounded-full py-2.5 pl-5 pr-12 text-sm font-bold text-gray-900 outline-none focus:border-gray-500">
-                    <option>Mais recentes</option>
-                    <option>Relevância</option>
+                  <select
+                    value={sortBy}
+                    onChange={(e) => handleSortChange(e.target.value)}
+                    className="appearance-none bg-white border border-gray-300 rounded-full py-2.5 pl-5 pr-12 text-sm font-bold text-gray-900 outline-none focus:border-gray-500 cursor-pointer"
+                  >
+                    <option value="relevance">Relevância</option>
+                    <option value="recent">Mais recentes</option>
                   </select>
                   <span className="material-symbols-outlined absolute right-4 top-2.5 text-gray-500 pointer-events-none text-lg">expand_more</span>
                 </div>
@@ -217,14 +248,23 @@ const HomePage = () => {
                 ) : results.length > 0 ? (
                   results.map((item, index) => (
                     <ResultCard 
-                      key={index}
-                      tag={item.tag || "Documento"}
-                      period={item.period || "Geral"}
-                      course={item.course || "Universidade"}
-                      title={item.title || "Documento sem título"}
-                      description={item.abs || "Sem descrição disponível."}
-                      type={item.type || "Geral"}
-                      time={item.time || "Recente"}
+                      key={item.url + index}
+                      url={item.url}
+                      chunkType={item.chunk_type}
+                      disciplineName={item.discipline_name}
+                      period={item.period}
+                      courseName={item.course_name}
+                      summary={item.summary}
+                      title={item.title}
+                      workloadTotal={item.workload_total}
+                      workloadTheoretical={item.workload_theoretical}
+                      workloadPractical={item.workload_practical}
+                      workloadActivity={item.workload_activity}
+                      prerequisites={item.prerequisites}
+                      tags={item.tags}
+                      pageStart={item.page_start}
+                      score={item.score}
+                      maxScore={item.max_score}
                     />
                   ))
                 ) : (

@@ -1,41 +1,152 @@
-const ResultCard = ({ tag, period, course, title, description, time }) => (
-  <article className="bg-white border border-gray-200 rounded-2xl p-5 md:p-6 hover:border-secondary hover:shadow-md transition-all cursor-pointer">
-    <div className="flex justify-between items-start mb-4">
-      <div className="flex items-center gap-3">
-        <div className="w-10 h-10 bg-unifal-bg rounded-full flex shrink-0 items-center justify-center text-primary">
-          <span className="material-symbols-outlined">school</span>
+const ResultCard = ({
+  url,
+  chunkType,
+  disciplineName,
+  period,
+  courseName,
+  summary,
+  title,
+  workloadTotal,
+  workloadTheoretical,
+  workloadPractical,
+  workloadActivity,
+  prerequisites,
+  tags,
+  pageStart,
+  score,
+  maxScore,
+}) => {
+  const isDiscipline = chunkType === "discipline_syllabus";
+  const displayTitle = isDiscipline && disciplineName ? disciplineName : title;
+  const relevancePercent = maxScore > 0 ? Math.round((score / maxScore) * 100) : 0;
+
+  const handleClick = () => {
+    if (url) {
+      window.open(url, "_blank", "noopener,noreferrer");
+    }
+  };
+
+  return (
+    <article
+      onClick={handleClick}
+      className="bg-white border border-gray-200 rounded-2xl p-5 md:p-6 hover:border-secondary hover:shadow-md transition-all cursor-pointer group"
+    >
+      {/* Header: course + relevance */}
+      <div className="flex justify-between items-start mb-3">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="w-10 h-10 bg-unifal-bg rounded-full flex shrink-0 items-center justify-center text-primary">
+            <span className="material-symbols-outlined">
+              {isDiscipline ? "school" : "description"}
+            </span>
+          </div>
+          <div className="min-w-0">
+            <span className="font-bold text-gray-900 line-clamp-1 leading-tight block">
+              {courseName || "Documento"}
+            </span>
+            {period && (
+              <span className="text-xs text-gray-500 font-medium">{period} Período</span>
+            )}
+          </div>
         </div>
-        <span className="font-bold text-gray-900 line-clamp-2 leading-tight">{course}</span>
+
+        {/* Relevance indicator */}
+        <div className="flex items-center gap-2 shrink-0 ml-3">
+          <div className="flex flex-col items-end">
+            <span className="text-xs font-bold text-primary">{relevancePercent}%</span>
+            <div className="w-16 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-primary rounded-full transition-all duration-500"
+                style={{ width: `${relevancePercent}%` }}
+              ></div>
+            </div>
+          </div>
+          <button
+            type="button"
+            className="text-gray-400 hover:text-primary transition-colors"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <span className="material-symbols-outlined font-light">bookmark</span>
+          </button>
+        </div>
       </div>
-      <div className="flex items-center gap-2 md:gap-4 shrink-0">
-        <span className="text-xs md:text-sm font-medium text-gray-500">{time}</span>
-        <button type="button" className="text-gray-400 hover:text-primary transition-colors">
-          <span className="material-symbols-outlined font-light">bookmark</span>
-        </button>
+
+      {/* Title */}
+      <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-2 group-hover:text-primary transition-colors">
+        {displayTitle}
+      </h3>
+
+      {/* Ementa / Summary */}
+      {summary && (
+        <div className="mb-4">
+          {isDiscipline && (
+            <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">Ementa</span>
+          )}
+          <p className="text-gray-600 text-sm leading-relaxed line-clamp-3 mt-0.5">
+            {summary}
+          </p>
+        </div>
+      )}
+
+      {/* Workload bar (only for disciplines) */}
+      {isDiscipline && workloadTotal && (
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mb-4 text-xs font-medium">
+          <div className="flex items-center gap-1.5 text-gray-700">
+            <span className="material-symbols-outlined text-[16px]">timer</span>
+            C.H Total: <span className="font-bold text-gray-900">{workloadTotal}h</span>
+          </div>
+          {workloadTheoretical != null && (
+            <div className="flex items-center gap-1 text-gray-600">
+              Teórica: <span className="font-bold text-gray-800">{workloadTheoretical}h</span>
+            </div>
+          )}
+          {workloadPractical != null && (
+            <div className="flex items-center gap-1 text-gray-600">
+              Prática: <span className="font-bold text-gray-800">{workloadPractical}h</span>
+            </div>
+          )}
+          {workloadActivity != null && (
+            <div className="flex items-center gap-1 text-gray-600">
+              Atividade: <span className="font-bold text-gray-800">{workloadActivity}h</span>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Prerequisites (only if present) */}
+      {isDiscipline && prerequisites && prerequisites.length > 0 && (
+        <div className="mb-4 text-xs">
+          <span className="font-bold text-gray-500 uppercase tracking-wider">Pré-requisitos: </span>
+          <span className="text-gray-700 font-medium">{prerequisites.join(", ")}</span>
+        </div>
+      )}
+
+      {/* Footer: metadata */}
+      <div className="flex flex-wrap items-center gap-y-2 gap-x-3 md:gap-4 text-xs md:text-sm font-medium text-gray-500 pt-3 border-t border-gray-100">
+        <div className="flex items-center gap-1.5">
+          <span className="material-symbols-outlined text-[16px]">article</span>
+          Página {pageStart}
+        </div>
+        <div className="hidden md:block w-px h-4 bg-gray-200"></div>
+        {tags && tags.length > 0 && (
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <span className="material-symbols-outlined text-[16px]">sell</span>
+            {tags.slice(0, 3).map((tag) => (
+              <span
+                key={tag}
+                className="px-2 py-0.5 bg-unifal-bg text-primary rounded-full text-xs font-bold"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
+        <div className="ml-auto flex items-center gap-1 text-primary font-bold opacity-0 group-hover:opacity-100 transition-opacity">
+          Ver documento
+          <span className="material-symbols-outlined text-[16px]">open_in_new</span>
+        </div>
       </div>
-    </div>
-    
-    <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-2">{title}</h3>
-    <p className="text-gray-600 text-sm line-clamp-2 mb-6">{description}</p>
-    
-    <div className="flex flex-wrap items-center gap-y-2 gap-x-3 md:gap-4 text-xs md:text-sm font-medium text-gray-600">
-      <div className="flex items-center gap-1.5">
-        <span className="material-symbols-outlined text-[16px] md:text-[18px]">schedule</span> {period}
-      </div>
-      <div className="hidden md:block w-px h-4 bg-gray-300"></div>
-      <div className="flex items-center gap-1.5">
-        <span className="material-symbols-outlined text-[16px] md:text-[18px]">public</span> Presencial
-      </div>
-      <div className="hidden md:block w-px h-4 bg-gray-300"></div>
-      <div className="flex items-center gap-1.5">
-        <span className="material-symbols-outlined text-[16px] md:text-[18px]">group</span> 40 Alunos
-      </div>
-      <div className="hidden md:block w-px h-4 bg-gray-300"></div>
-      <div className="flex items-center gap-1.5 font-bold text-gray-800">
-        <span className="material-symbols-outlined text-[16px] md:text-[18px] text-gray-400">sell</span> {tag}
-      </div>
-    </div>
-  </article>
-);
+    </article>
+  );
+};
 
 export default ResultCard;
