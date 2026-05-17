@@ -69,7 +69,8 @@ test('HomePage requests new page when pagination is used', async () => {
   await user.click(page2Button);
 
   await waitFor(() => {
-    expect(fetchMock).toHaveBeenCalledWith(expect.stringContaining('page=2'));
+    const lastCall = fetchMock.mock.calls[fetchMock.mock.calls.length - 1][0];
+    expect(lastCall).toContain('page=2');
   });
 });
 
@@ -104,6 +105,11 @@ test('HomePage resets to page 1 when sort or category changes', async () => {
 
   const page2Button = await screen.findByRole('button', { name: '2' });
   await user.click(page2Button);
+
+  await waitFor(() => {
+    const lastCall = fetchMock.mock.calls[fetchMock.mock.calls.length - 1][0];
+    expect(lastCall).toContain('page=2');
+  });
 
   await user.selectOptions(screen.getByRole('combobox'), 'recent');
 
