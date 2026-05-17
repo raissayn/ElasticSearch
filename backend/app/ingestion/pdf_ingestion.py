@@ -27,6 +27,11 @@ PERIOD_PATTERN = re.compile(
     flags=re.IGNORECASE,
 )
 
+PERIOD_NAMES = {
+    "primeiro": 1, "segundo": 2, "terceiro": 3, "quarto": 4,
+    "quinto": 5, "sexto": 6, "sétimo": 7, "setimo": 7, "oitavo": 8,
+}
+
 
 def load_manifest(manifest_path: Path) -> list[dict[str, Any]]:
     with manifest_path.open("r", encoding="utf-8") as file:
@@ -73,6 +78,12 @@ def build_page_url(base_url: str, page_number: int) -> str:
     return f"{base_url}#page={page_number}"
 
 
+def parse_period_number(period_text: str) -> int | None:
+    if not period_text:
+        return None
+    return PERIOD_NAMES.get(period_text.lower().strip())
+
+
 def build_documents_for_source(source: dict[str, Any], pages: list[tuple[int, str]]) -> list[dict[str, Any]]:
     local_path = Path(source["local_path"])
     source_tags = source.get("tags") or []
@@ -86,6 +97,20 @@ def build_documents_for_source(source: dict[str, Any], pages: list[tuple[int, st
         period = period_match.group(1).title() if period_match else source.get("period", "")
         discipline_chunks = list(DISCIPLINE_PATTERN.finditer(page_text))
 
+        # Base document with common metadata
+        base_doc = {
+            "source_id": source_id,
+            "tipo_documento": source.get("tipo_documento", "ppc"),
+            "titulo_documento": source["title"],
+            "curso": source.get("curso", ""),
+            "instituicao": source.get("instituicao", "UNIFAL-MG"),
+            "ano_vigencia": source.get("ano_vigencia"),
+            "url_documento": build_page_url(public_url, page_number),
+            "pagina": page_number,
+            "tags": list(set(source_tags)),
+            "indexado_em": now_iso,
+        }
+
         if discipline_chunks:
             for chunk_index, chunk in enumerate(discipline_chunks, start=1):
                 discipline_name = normalize_text(chunk.group("discipline"))
@@ -96,80 +121,29 @@ def build_documents_for_source(source: dict[str, Any], pages: list[tuple[int, st
                 document_id = f"{source_id}-p{page_number}-d{chunk_index}"
                 documents.append(
                     {
+                        **base_doc,
                         "document_id": document_id,
-                        "source_id": source_id,
-                        "doc_type": source.get("doc_type", "documento_academico"),
-                        "chunk_type": "discipline_syllabus",
-                        "title": source["title"],
-                        "section_title": f"{discipline_name} - Página {page_number}",
-                        "content": body,
-                        "summary": summary,
-                        "searchable_text": " ".join(
-                            [
-                                source["title"],
-                                discipline_name,
-                                summary,
-                                body,
-                                source.get("course_name", ""),
-                            ]
-                        ).strip(),
-                        "url": build_page_url(public_url, page_number),
-                        "source_file": local_path.name,
-                        "source_path": str(local_path),
-                        "course_name": source.get("course_name", ""),
-                        "academic_year": source.get("academic_year"),
-                        "period": period,
-                        "discipline_name": discipline_name,
-                        "prerequisites": prerequisites,
-                        "workload_total": workloads["total"],
-                        "workload_theoretical": workloads["theoretical"],
-                        "workload_practical": workloads["practical"],
-                        "workload_activity": workloads["activity"],
-                        "page_start": page_number,
-                        "page_end": page_number,
-                        "chunk_index": chunk_index,
-                        "tags": list(set(source_tags + ["ementa"])),
-                        "ingested_at": now_iso,
+                        "tipo_conteudo": "disciplina",
+                        "nome_disciplina": discipline_name,
+                        "periodo": parse_period_number(period),
+                        "tipo_disciplina": "Obrigatória",
+                        "pre_requisitos": prerequisites,
+                        "ementa": summary,
+                        "conteudo": body,
+                        "carga_horaria_total": workloads["total"],
+                        "carga_horaria_teorica": workloads["theoretical"],
+                        "carga_horaria_pratica": workloads["practical"],
                     }
                 )
         else:
             document_id = f"{source_id}-p{page_number}"
-            summary = extract_summary(page_text)
             documents.append(
                 {
+                    **base_doc,
                     "document_id": document_id,
-                    "source_id": source_id,
-                    "doc_type": source.get("doc_type", "documento_academico"),
-                    "chunk_type": "page_text",
-                    "title": source["title"],
-                    "section_title": f"Página {page_number}",
-                    "content": page_text,
-                    "summary": summary,
-                    "searchable_text": " ".join(
-                        [
-                            source["title"],
-                            summary,
-                            page_text,
-                            source.get("course_name", ""),
-                        ]
-                    ).strip(),
-                    "url": build_page_url(public_url, page_number),
-                    "source_file": local_path.name,
-                    "source_path": str(local_path),
-                    "course_name": source.get("course_name", ""),
-                    "academic_year": source.get("academic_year"),
-                    "period": period,
-                    "discipline_name": "",
-                    "prerequisites": [],
-                    "workload_total": None,
-                    "workload_theoretical": None,
-                    "workload_practical": None,
-                    "workload_activity": None,
-                    "page_start": page_number,
-                    "page_end": page_number,
-                    "chunk_index": 1,
-                    "tags": source_tags,
-                    "ingested_at": now_iso,
+                    "tipo_conteudo": "secao_texto",
+                    "titulo_secao": f"Página {page_number}",
+                    "conteudo": page_text,
                 }
             )
 
