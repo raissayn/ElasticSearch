@@ -1,6 +1,9 @@
 import { useContext, useState, useRef, useEffect } from 'react';
 import { SearchContext } from '../contexts/SearchContext';
 import ResultCard from '../components/ResultCard';
+import Pagination from '../components/Pagination';
+
+const PAGE_SIZE = 10;
 
 const HomePage = () => {
   const { query, setQuery } = useContext(SearchContext);
@@ -11,6 +14,8 @@ const HomePage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [sortBy, setSortBy] = useState("relevance");
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = Math.ceil(total / PAGE_SIZE);
   
   const [category, setCategory] = useState("Tudo");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -29,17 +34,25 @@ const HomePage = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const performSearch = async (searchQuery, searchSort, searchCategory = category) => {
+  const performSearch = async (
+    searchQuery,
+    searchSort,
+    searchCategory = category,
+    searchPage = 1
+  ) => {
     if (!searchQuery.trim() && searchCategory === "Tudo") {
       setHasSearched(false);
       setResults([]);
       setTotal(0);
+      setMaxScore(0);
+      setCurrentPage(1);
       return;
     }
 
     setHasSearched(true);
     setIsLoading(true);
     setError(null);
+    setCurrentPage(searchPage);
 
     try {
       const categoryMap = {
@@ -52,7 +65,7 @@ const HomePage = () => {
 
       const params = new URLSearchParams({
         query: searchQuery,
-        page: "1",
+        page: String(searchPage),
         sort_by: searchSort,
       });
       if (tipo) {
@@ -78,14 +91,21 @@ const HomePage = () => {
 
   const handleSearch = async (e) => {
     e.preventDefault();
-    await performSearch(query, sortBy);
+    await performSearch(query, sortBy, category, 1);
   };
 
   const handleSortChange = async (newSort) => {
     setSortBy(newSort);
     if (hasSearched && query.trim()) {
-      await performSearch(query, newSort);
+      await performSearch(query, newSort, category, 1);
     }
+  };
+
+  const handlePageChange = async (page) => {
+    if (page === currentPage) {
+      return;
+    }
+    await performSearch(query, sortBy, category, page);
   };
 
   const handleClear = () => {
@@ -96,6 +116,7 @@ const HomePage = () => {
     setResults([]);
     setTotal(0);
     setMaxScore(0);
+    setCurrentPage(1);
     setError(null);
   };
 
@@ -190,7 +211,7 @@ const HomePage = () => {
                         setCategory(cat);
                         setIsDropdownOpen(false);
                         if (query.trim()) {
-                          performSearch(query, sortBy, cat);
+                          performSearch(query, sortBy, cat, 1);
                         }
                       }}
                     >
@@ -274,6 +295,16 @@ const HomePage = () => {
                   !error && <p className="text-gray-500">Nenhum resultado encontrado para a sua busca.</p>
                 )}
               </div>
+
+              {!isLoading && !error && results.length > 0 && totalPages > 1 && (
+                <div className="mt-8 flex justify-center">
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                  />
+                </div>
+              )}
             </div>
           </div>
         )}
