@@ -2,6 +2,7 @@ import { useContext, useState, useRef, useEffect } from 'react';
 import { SearchContext } from '../contexts/SearchContext';
 import ResultCard from '../components/ResultCard';
 import Pagination from '../components/Pagination';
+import logoUnifal from '../assets/logoUnifal.png';
 
 const PAGE_SIZE = 10;
 
@@ -125,13 +126,8 @@ const HomePage = () => {
       {/* Navbar */}
       <nav className="flex justify-between items-center px-4 md:px-8 py-4 md:py-6 max-w-7xl mx-auto">
         <div className="text-2xl font-bold tracking-tight text-primary">UniSearch.</div>
-        <div className="hidden md:flex items-center gap-8 text-sm font-bold">
-          <a href="#" className="text-gray-800 hover:text-secondary transition-colors">Postar ementa</a>
-          <a href="#" className="text-gray-800 hover:text-secondary transition-colors">Sobre</a>
-          <a href="#" className="text-gray-800 hover:text-secondary transition-colors">Login</a>
-          <button type="button" className="px-5 py-2.5 rounded-full border-2 border-primary text-primary hover:bg-unifal-bg transition-colors">
-            Sign up
-          </button>
+        <div className="hidden md:flex items-center">
+          <img src={logoUnifal} alt="Logo UNIFAL" className="h-10 w-auto object-contain hover:scale-105 transition-transform duration-200" />
         </div>
         <button className="md:hidden text-gray-900 p-2">
           <span className="material-symbols-outlined">menu</span>
