@@ -126,12 +126,12 @@ const HomePage = () => {
       {/* Navbar */}
       <nav className="flex justify-between items-center px-4 md:px-8 py-4 md:py-6 max-w-7xl mx-auto">
         <div className="text-2xl font-bold tracking-tight text-primary">UniSearch.</div>
-        <div className="hidden md:flex items-center">
-          <img src={logoUnifal} alt="Logo UNIFAL" className="h-10 w-auto object-contain hover:scale-105 transition-transform duration-200" />
+        <div className="flex items-center gap-4">
+          <img src={logoUnifal} alt="Logo UNIFAL" className="h-8 md:h-10 w-auto object-contain hover:scale-105 transition-transform duration-200" />
+          <button className="md:hidden text-gray-900 p-2">
+            <span className="material-symbols-outlined">menu</span>
+          </button>
         </div>
-        <button className="md:hidden text-gray-900 p-2">
-          <span className="material-symbols-outlined">menu</span>
-        </button>
       </nav>
 
       {/* Main Container */}
