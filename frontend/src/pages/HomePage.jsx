@@ -96,7 +96,7 @@ const HomePage = () => {
 
   const handleSortChange = async (newSort) => {
     setSortBy(newSort);
-    if (hasSearched && query.trim()) {
+    if (hasSearched) {
       await performSearch(query, newSort, category, 1);
     }
   };
@@ -210,7 +210,7 @@ const HomePage = () => {
                       onClick={() => {
                         setCategory(cat);
                         setIsDropdownOpen(false);
-                        if (query.trim()) {
+                        if (hasSearched || query.trim()) {
                           performSearch(query, sortBy, cat, 1);
                         }
                       }}

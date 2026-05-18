@@ -127,3 +127,47 @@ test('HomePage resets to page 1 when sort or category changes', async () => {
     expect(lastCall).toContain('tipo=disciplina');
   });
 });
+
+test('HomePage re-fetches on sort and category changes for category-only search', async () => {
+  const user = userEvent.setup();
+  const fetchMock = vi
+    .fn()
+    .mockResolvedValueOnce({ ok: true, json: async () => mockResponse() })
+    .mockResolvedValueOnce({ ok: true, json: async () => mockResponse() })
+    .mockResolvedValueOnce({ ok: true, json: async () => mockResponse() });
+
+  vi.stubGlobal('fetch', fetchMock);
+
+  renderHome();
+
+  await user.click(screen.getByText('Tudo'));
+  await user.click(screen.getByText('Disciplinas'));
+  await screen.findByText('Disciplinas');
+
+  await user.click(screen.getByRole('button', { name: 'Buscar' }));
+
+  await waitFor(() => {
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock.mock.calls[0][0]).toContain('tipo=disciplina');
+  });
+
+  const sortSelect = await screen.findByRole('combobox');
+  await user.selectOptions(sortSelect, 'recent');
+
+  await waitFor(() => {
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    const lastCall = fetchMock.mock.calls[fetchMock.mock.calls.length - 1][0];
+    expect(lastCall).toContain('page=1');
+    expect(lastCall).toContain('sort_by=recent');
+  });
+
+  await user.click(screen.getByText('Disciplinas'));
+  await user.click(screen.getByText('Regulamentos'));
+
+  await waitFor(() => {
+    expect(fetchMock).toHaveBeenCalledTimes(3);
+    const lastCall = fetchMock.mock.calls[fetchMock.mock.calls.length - 1][0];
+    expect(lastCall).toContain('page=1');
+    expect(lastCall).toContain('tipo=secao_texto');
+  });
+});
