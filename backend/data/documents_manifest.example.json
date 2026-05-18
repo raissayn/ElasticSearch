@@ -1,0 +1,18 @@
+{
+  "documents": [
+    {
+      "source_id": "ppc-cc-2023",
+      "title": "Projeto Pedagógico Ciência da Computação 2023",
+      "tipo_documento": "ppc",
+      "curso": "Ciência da Computação",
+      "instituicao": "UNIFAL-MG",
+      "ano_vigencia": 2023,
+      "local_path": "../baseDeDados/Projeto Pedagógico Ciência da Computação ingressantes 2023 (1).pdf",
+      "public_url": "https://academico.unifal-mg.edu.br/sitecurso/arquivositecurso.php?arquivoId=600",
+      "tags": [
+        "ppc",
+        "ciencia-da-computacao"
+      ]
+    }
+  ]
+}
