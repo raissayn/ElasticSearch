@@ -21,6 +21,7 @@ const HomePage = () => {
   const [category, setCategory] = useState("Tudo");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const searchInputRef = useRef(null);
 
   const categories = ["Tudo", "Disciplinas", "Regulamentos", "Professores"];
 
@@ -163,6 +164,7 @@ const HomePage = () => {
             <div className="flex-[2] flex items-center px-2 md:px-4 py-2 w-full">
               <span className="material-symbols-outlined text-gray-400 mr-2 md:mr-3 text-xl md:text-2xl">search</span>
               <input 
+                ref={searchInputRef}
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
@@ -227,26 +229,44 @@ const HomePage = () => {
         {/* Dynamic Content: Cards OR Results */}
         {!hasSearched ? (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-6xl mx-auto mt-12">
-            <div className="bg-white rounded-3xl p-6 md:p-8 border border-gray-200 hover:border-secondary hover:shadow-md transition-all cursor-pointer">
+            <div 
+              onClick={() => {
+                setCategory("Disciplinas");
+                searchInputRef.current?.focus();
+              }}
+              className="bg-white rounded-3xl p-6 md:p-8 border border-gray-200 hover:border-secondary hover:shadow-md transition-all cursor-pointer"
+            >
               <div className="mb-6 w-12 h-12 bg-unifal-bg rounded-full flex items-center justify-center">
                  <span className="material-symbols-outlined text-primary text-2xl">layers</span>
               </div>
-              <h3 className="font-bold text-xl mb-3 text-gray-900">Ementas e Planos</h3>
-              <p className="text-gray-600 text-base leading-relaxed">Acesse planos de ensino, bibliografias e descrições com facilidade.</p>
+              <h3 className="font-bold text-xl mb-3 text-gray-900">Disciplinas</h3>
+              <p className="text-gray-600 text-base leading-relaxed">Acesse ementas, cargas horárias, pré-requisitos e planos de ensino com facilidade.</p>
             </div>
-            <div className="bg-white rounded-3xl p-6 md:p-8 border border-gray-200 hover:border-secondary hover:shadow-md transition-all cursor-pointer">
+            <div 
+              onClick={() => {
+                setCategory("Professores");
+                searchInputRef.current?.focus();
+              }}
+              className="bg-white rounded-3xl p-6 md:p-8 border border-gray-200 hover:border-secondary hover:shadow-md transition-all cursor-pointer"
+            >
               <div className="mb-6 w-12 h-12 bg-unifal-bg rounded-full flex items-center justify-center">
-                 <span className="material-symbols-outlined text-primary text-2xl">calendar_month</span>
+                 <span className="material-symbols-outlined text-primary text-2xl">school</span>
               </div>
-              <h3 className="font-bold text-xl mb-3 text-gray-900">Horários</h3>
-              <p className="text-gray-600 text-base leading-relaxed">Consulte os horários de aulas e dias de atendimento dos professores.</p>
+              <h3 className="font-bold text-xl mb-3 text-gray-900">Corpo Docente</h3>
+              <p className="text-gray-600 text-base leading-relaxed">Consulte os professores do curso, suas titulações e áreas de atuação.</p>
             </div>
-            <div className="bg-white rounded-3xl p-6 md:p-8 border border-gray-200 hover:border-secondary hover:shadow-md transition-all cursor-pointer">
+            <div 
+              onClick={() => {
+                setCategory("Regulamentos");
+                searchInputRef.current?.focus();
+              }}
+              className="bg-white rounded-3xl p-6 md:p-8 border border-gray-200 hover:border-secondary hover:shadow-md transition-all cursor-pointer"
+            >
               <div className="mb-6 w-12 h-12 bg-unifal-bg rounded-full flex items-center justify-center">
                  <span className="material-symbols-outlined text-primary text-2xl">gavel</span>
               </div>
               <h3 className="font-bold text-xl mb-3 text-gray-900">Regulamentos</h3>
-              <p className="text-gray-600 text-base leading-relaxed">Encontre resoluções, normas e portarias institucionais em um lugar.</p>
+              <p className="text-gray-600 text-base leading-relaxed">Encontre normas de TCC, resoluções de estágio e regimentos internos em um só lugar.</p>
             </div>
           </div>
         ) : (
