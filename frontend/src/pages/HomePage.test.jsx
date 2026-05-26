@@ -119,7 +119,7 @@ test('HomePage resets to page 1 when sort or category changes', async () => {
   });
 
   await user.click(screen.getByText('Tudo'));
-  await user.click(screen.getByText('Disciplinas'));
+  await user.click(screen.getByText('Disciplinas', { selector: 'div' }));
 
   await waitFor(() => {
     const lastCall = fetchMock.mock.calls[fetchMock.mock.calls.length - 1][0];
@@ -141,8 +141,8 @@ test('HomePage re-fetches on sort and category changes for category-only search'
   renderHome();
 
   await user.click(screen.getByText('Tudo'));
-  await user.click(screen.getByText('Disciplinas'));
-  await screen.findByText('Disciplinas');
+  await user.click(screen.getByText('Disciplinas', { selector: 'div' }));
+  await screen.findByText('Disciplinas', { selector: 'span' });
 
   await user.click(screen.getByRole('button', { name: 'Buscar' }));
 
