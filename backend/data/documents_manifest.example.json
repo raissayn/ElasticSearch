@@ -3,15 +3,214 @@
     {
       "source_id": "ppc-cc-2023",
       "title": "Projeto Pedagógico Ciência da Computação 2023",
-      "tipo_documento": "ppc",
       "curso": "Ciência da Computação",
-      "instituicao": "UNIFAL-MG",
       "ano_vigencia": 2023,
-      "local_path": "../baseDeDados/Projeto Pedagógico Ciência da Computação ingressantes 2023 (1).pdf",
+      "local_path": "../data/pdfs/Projeto Pedagógico Ciência da Computação ingressantes 2023 (1).pdf",
       "public_url": "https://academico.unifal-mg.edu.br/sitecurso/arquivositecurso.php?arquivoId=600",
       "tags": [
         "ppc",
-        "ciencia-da-computacao"
+        "ciencia-da-computacao",
+        "regulamentacao"
+      ]
+    },
+    {
+      "source_id": "ppc-cc-2020",
+      "title": "Projeto Pedagógico Ciência da Computação 2020",
+      "curso": "Ciência da Computação",
+      "ano_vigencia": 2020,
+      "local_path": "../data/pdfs/Projeto_Pedagogico_ingressantes_a_partir_de_2020_Resolucao_16_2022.pdf",
+      "public_url": "https://academico.unifal-mg.edu.br/sitecurso/arquivositecurso.php?arquivoId=494",
+      "tags": [
+        "ppc",
+        "ciencia-da-computacao",
+        "regulamentacao"
+      ]
+    },
+    {
+      "source_id": "tcc-cc-2020",
+      "title": "Regulamentação TCC 2020 - Computação",
+      "curso": "Ciência da Computação",
+      "ano_vigencia": 2020,
+      "local_path": "../data/pdfs/Regulamentacao TCC_Computacao_Resolucao041.2020.pdf",
+      "public_url": "https://academico.unifal-mg.edu.br/sitecurso/arquivositecurso.php?arquivoId=426",
+      "tags": [
+        "ciencia-da-computacao",
+        "regulamentacao"
+      ]
+    },
+    {
+      "source_id": "etag-obg-cc-2018",
+      "title": "Regulamentação Estágio Obrigatório 2018 - Computação",
+      "curso": "Ciência da Computação",
+      "ano_vigencia": 2018,
+      "local_path": "../data/pdfs/Regulamentacao_Estagio_Obrigatorio_Ciencia_da_Computacao_Res_047_12_09_2018.pdf",
+      "public_url": "https://academico.unifal-mg.edu.br/sitecurso/arquivositecurso.php?arquivoId=494",
+      "tags": [
+        "ciencia-da-computacao",
+        "estagio",
+        "regulamentacao"
+      ]
+    },
+    {
+      "source_id": "etag-naoobg-cc-2018",
+      "title": "Regulamentação Estágio Não obrigatório 2018 - Computação",
+      "curso": "Ciência da Computação",
+      "ano_vigencia": 2018,
+      "local_path": "../data/pdfs/Regulamentacao_Estagio_Nao_Obrigatorio_Ciencia_da_Computacao_Res_048_12_09_2018.pdf",
+      "public_url": "https://academico.unifal-mg.edu.br/sitecurso/arquivositecurso.php?arquivoId=122",
+      "tags": [
+        "ciencia-da-computacao",
+        "estagio",
+        "regulamentacao"
+      ]
+    },
+    {
+      "source_id": "etag-obg-cc-2023",
+      "title": "Regulamentação Estágio Obrigatório 2023 - Computação",
+      "curso": "Ciência da Computação",
+      "ano_vigencia": 2023,
+      "local_path": "../data/pdfs/RESOLUÇÃO Nº 001 DE 03 DE MARÇO DE 2023 - Estágio Obrigatório Computação.pdf",
+      "public_url": "https://academico.unifal-mg.edu.br/sitecurso/arquivositecurso.php?arquivoId=553",
+      "tags": [
+        "ciencia-da-computacao",
+        "estagio",
+        "regulamentacao"
+      ]
+    },
+    {
+      "source_id": "etag-naoobg-cc-2023",
+      "title": "Regulamentação Estágio Não Obrigatório 2023 - Computação",
+      "curso": "Ciência da Computação",
+      "ano_vigencia": 2023,
+      "local_path": "../data/pdfs/RESOLUÇÃO Nº 002 DE 03 DE MARÇO DE 2023 - Estágio não Obrigatório Computação.pdf",
+      "public_url": "https://academico.unifal-mg.edu.br/sitecurso/arquivositecurso.php?arquivoId=554",
+      "tags": [
+        "ciencia-da-computacao",
+        "estagio",
+        "regulamentacao"
+      ]
+    },
+    {
+      "source_id": "ac-cc-2024",
+      "title": "Regulamentação das atividades complementares do curso de Ciência da Computação",
+      "curso": "Ciência da Computação",
+      "ano_vigencia": 2024,
+      "local_path": "../data/pdfs/SEI_1400397_Resolucao_N__04_de_07_de_novembro_de_2024___A_C.pdf",
+      "public_url": "https://academico.unifal-mg.edu.br/sitecurso/arquivositecurso.php?arquivoId=727",
+      "tags": [
+        "ciencia-da-computacao",
+        "ac"
+      ]
+    },
+    {
+      "source_id": "plan-cc-2024",
+      "title": "PLANO DE AÇÃO DA COORDENAÇÃO DO CURSO DE CIÊNCIA DA COMPUTAÇÃO",
+      "curso": "Ciência da Computação",
+      "ano_vigencia": 2024,
+      "local_path": "../data/pdfs/SEI_1522019_Prograd___Plano_de_Acao_da_Coordenacao.pdf",
+      "public_url": "https://academico.unifal-mg.edu.br/sitecurso/arquivositecurso.php?arquivoId=755",
+      "tags": [
+        "plan",
+        "ciencia-da-computacao",
+        "coordenacao"
+      ]
+    },
+    {
+      "source_id": "cm-cc-2024",
+      "title": "Comissões BCC",
+      "curso": "Ciência da Computação",
+      "ano_vigencia": 2024,
+      "local_path": "../data/pdfs/COMISSÕES.pdf",
+      "public_url": "https://www.unifal-mg.edu.br/graduacao/cursos/?sitecurso=25&cursoid=401100",
+      "tags": [
+        "plan",
+        "ciencia-da-computacao",
+        "coordenacao",
+        "comissao"
+      ]
+    },
+    {
+      "source_id": "guide-cc",
+      "title": "Conheça o Curso Ciência da Computação - UNIFAL",
+      "curso": "Ciência da Computação",
+      "ano_vigencia": 2024,
+      "local_path": "../data/pdfs/CONHEÇA O CURSO CIÊNCIA DA COMPUTAÇÃO.pdf",
+      "public_url": "https://www.unifal-mg.edu.br/dcc/o-curso/",
+      "tags": [
+        "ciencia-da-computacao",
+        "coordenacao",
+        "oportunidades",
+        "guia"
+      ]
+    },
+    {
+      "source_id": "reg-cc",
+      "title": "Regimento Interno do Colegiado do Curso de Ciência da Computação",
+      "curso": "Ciência da Computação",
+      "ano_vigencia": 2024,
+      "local_path": "../data/pdfs/Resolucao-032-Regimento-Interno-do-Colegiado-do-Curso-de-Ciencia-da-Computacao-alterada.pdf",
+      "public_url": "https://academico.unifal-mg.edu.br/sitecurso/arquivositecurso.php?arquivoId=496",
+      "tags": [
+        "ciencia-da-computacao",
+        "regimento",
+        "colegiado"
+      ]
+    },
+    {
+      "source_id": "mem-cc",
+      "title": "Memorial curso Ciência da Computação",
+      "curso": "Ciência da Computação",
+      "ano_vigencia": 2024,
+      "local_path": "../data/pdfs/MEMORIAL CIENCIA DA COMPUTACAO.pdf",
+      "public_url": "https://academico.unifal-mg.edu.br/sitecurso/arquivositecurso.php?arquivoId=657",
+      "tags": [
+        "ciencia-da-computacao",
+        "memorial"
+      ]
+    }
+  ],
+
+  "dynamics": [
+    {
+      "source_id": "dc6-cc",
+      "title": "Dinâmica Curricular 6 - BCC UNIFAL",
+      "curso": "Ciência da Computação",
+      "ano_vigencia": 2020,
+      "local_path": "../data/pdfs/DinamicaCurricular-6.pdf",
+      "public_url": "file:///home/raissa/Downloads/DinamicaCurricular-5.pdf",
+      "tags": [
+        "ciencia-da-computacao",
+        "dc6",
+        "dinamica-curricular"
+      ]
+    },
+    {
+      "source_id": "dc7-cc",
+      "title": "Dinâmica Curricular 7 - BCC UNIFAL",
+      "curso": "Ciência da Computação",
+      "ano_vigencia": 2023,
+      "local_path": "../data/pdfs/DinamicaCurricular-7.pdf",
+      "public_url": "file:///home/raissa/Downloads/DinamicaCurricular-5.pdf",
+      "tags": [
+        "ciencia-da-computacao",
+        "dc7",
+        "dinamica-curricular"
+      ]
+    }
+  ],
+
+  "faculty": [
+    {
+      "source_id": "cd-cc",
+      "title": "Corpo Docente - BCC UNIFAL",
+      "curso": "Ciência da Computação",
+      "ano_vigencia": 2026,
+      "local_path": "../data/pdfs/corpo_docente.pdf",
+      "public_url": "https://academico.unifal-mg.edu.br:8443/academico/publico/corpodocente/search/401100",
+      "tags": [
+        "ciencia-da-computacao",
+        "cd",
+        "professores"
       ]
     }
   ]

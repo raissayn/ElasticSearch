@@ -13,7 +13,8 @@ async def search(
     query: str = Query(..., description="Query to be submitted"),
     page: int = Query(1, description="Page number of results"),
     sort_by: str = Query("relevance", description="Sort order: 'relevance' or 'recent'"),
+    tipo: str = Query("", description="Filter by content type: 'disciplina', 'secao_texto', 'pessoa'"),
 ):
-    result = search_service.submit_query(query, page, sort_by)
+    result = search_service.submit_query(query, page, sort_by, tipo)
 
     return result
