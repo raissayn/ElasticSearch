@@ -1,3 +1,4 @@
 .agents/
 docs/
 skills-lock.json
+venv/
