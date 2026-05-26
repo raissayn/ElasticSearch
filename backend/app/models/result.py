@@ -4,35 +4,36 @@ from pydantic import BaseModel
 
 
 class Result(BaseModel):
-    # Identification
-    title: str
-    url: str
-    chunk_type: str = "page_text"
-
-    # Discipline structured data
-    discipline_name: str = ""
-    period: str = ""
-    course_name: str = ""
-    summary: str = ""
-
-    # Workload
-    workload_total: Optional[int] = None
-    workload_theoretical: Optional[int] = None
-    workload_practical: Optional[int] = None
-    workload_activity: Optional[int] = None
-
-    # Prerequisites
-    prerequisites: list[str] = []
-
-    # Metadata
+    # Common metadata
+    tipo_documento: str = ""
+    tipo_conteudo: str = ""
+    titulo_documento: str = ""
+    curso: str = ""
+    pagina: int = 1
+    url_documento: str = ""
     tags: list[str] = []
-    page_start: int = 1
-    ingested_at: str = ""
-    source_file: str = ""
-
-    # Search relevance
     score: float = 0.0
     max_score: float = 0.0
+
+    # Disciplina fields
+    nome_disciplina: str = ""
+    periodo: Optional[int] = None
+    tipo_disciplina: str = ""
+    pre_requisitos: list[str] = []
+    ementa: str = ""
+    carga_horaria_total: Optional[int] = None
+    carga_horaria_teorica: Optional[int] = None
+    carga_horaria_pratica: Optional[int] = None
+
+    # Seção texto fields
+    titulo_secao: str = ""
+    conteudo: str = ""
+
+    # Pessoa fields
+    nome_pessoa: str = ""
+    cargo: str = ""
+    titulacao: str = ""
+    area_atuacao: str = ""
 
 
 class SearchResponse(BaseModel):
