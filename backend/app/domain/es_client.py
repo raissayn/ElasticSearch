@@ -14,28 +14,39 @@ class EsClient:
             
         self.client = Elasticsearch(**client_kwargs)
 
-    def search(self, query: str, page: int = 1, sort_by: str = "relevance"):
+    def search(self, query: str, page: int = 1, sort_by: str = "relevance", tipo_conteudo: str = ""):
         page_size = settings.page_size
         from_value = ((page if page else 1) - 1) * page_size
+
+        must = {
+            "multi_match": {
+                "query": query,
+                "fields": list(settings.boosted_search_fields),
+            }
+        }
+
+        if tipo_conteudo:
+            query_body = {
+                "bool": {
+                    "must": must,
+                    "filter": {"term": {"tipo_conteudo": tipo_conteudo}},
+                }
+            }
+        else:
+            query_body = must
 
         search_kwargs = {
             "index": settings.index_name,
             "from_": from_value,
             "size": page_size,
-            "query": {
-                "multi_match": {
-                    "query": query,
-                    "fields": list(settings.boosted_search_fields),
-                }
-            },
+            "query": query_body,
         }
 
         if sort_by == "recent":
             search_kwargs["sort"] = [
-                {"ingested_at": {"order": "desc"}},
+                {"indexado_em": {"order": "desc"}},
                 "_score",
             ]
-            # Ensure _score is still calculated when using custom sort
             search_kwargs["track_scores"] = True
 
         response = self.client.search(**search_kwargs)
