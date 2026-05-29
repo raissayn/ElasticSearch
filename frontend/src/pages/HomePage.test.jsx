@@ -171,3 +171,45 @@ test('HomePage re-fetches on sort and category changes for category-only search'
     expect(lastCall).toContain('tipo=secao_texto');
   });
 });
+
+test('HomePage renders "Sobre" section and hides it during search', async () => {
+  const user = userEvent.setup();
+  const fetchMock = vi.fn().mockResolvedValue({
+    ok: true,
+    json: async () => mockResponse(),
+  });
+  vi.stubGlobal('fetch', fetchMock);
+
+  renderHome();
+
+  // "Sobre" section headers should be present initially
+  expect(screen.getByRole('heading', { name: /Conheça o UniSearch/i })).toBeDefined();
+  expect(screen.getByText(/Como Surgiu/i)).toBeDefined();
+  expect(screen.getByText(/O que a Plataforma Faz/i)).toBeDefined();
+  expect(screen.getByText(/Nosso Diferencial/i)).toBeDefined();
+
+  // Search for something to transition hasSearched to true
+  const input = screen.getByPlaceholderText(/Busque por/i);
+  await user.type(input, 'calculo');
+  await user.click(screen.getByRole('button', { name: 'Buscar' }));
+
+  // Wait for results to be shown and verify "Sobre" section is hidden
+  await screen.findByText(/resultados encontrados/i);
+  expect(screen.queryByRole('heading', { name: /Conheça o UniSearch/i })).toBeNull();
+});
+
+test('HomePage scrolls and focuses search input when clicking "Ir para o buscador"', async () => {
+  const user = userEvent.setup();
+  // Mock window.scrollTo
+  const scrollToMock = vi.fn();
+  vi.stubGlobal('scrollTo', scrollToMock);
+
+  renderHome();
+
+  const ctaButton = screen.getByRole('button', { name: /Ir para o buscador/i });
+  await user.click(ctaButton);
+
+  expect(scrollToMock).toHaveBeenCalledWith({ top: 0, behavior: 'smooth' });
+  const input = screen.getByPlaceholderText(/Busque por/i);
+  expect(document.activeElement).toBe(input);
+});
