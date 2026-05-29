@@ -151,7 +151,7 @@ const HomePage = () => {
 
           <div className="relative z-10 max-w-3xl mt-2 md:mt-4">
             <h1 className="text-4xl md:text-6xl lg:text-[72px] font-bold text-primary tracking-tight mb-4 md:mb-6 leading-none">
-              E aí, estudante! 👋
+              E aí, estudante! <span role="img" aria-label="aceno">👋</span>
             </h1>
             <p className="text-lg md:text-2xl text-gray-700 font-medium max-w-2xl">
               O que você vai descobrir hoje? Faça buscas inteligentes e encontre qualquer material em nossa base de dados
@@ -162,7 +162,7 @@ const HomePage = () => {
           <form onSubmit={handleSearch} className="relative z-10 w-full mt-10 md:mt-16 bg-white rounded-3xl md:rounded-full p-3 md:p-2 flex flex-col md:flex-row items-center shadow-lg gap-2 md:gap-0">
             {/* Input Field - takes more space */}
             <div className="flex-[2] flex items-center px-2 md:px-4 py-2 w-full">
-              <span className="material-symbols-outlined text-gray-400 mr-2 md:mr-3 text-xl md:text-2xl">search</span>
+              <span className="material-symbols-outlined text-gray-400 mr-2 md:mr-3 text-xl md:text-2xl" aria-hidden="true">search</span>
               <input 
                 ref={searchInputRef}
                 type="text"
@@ -238,7 +238,7 @@ const HomePage = () => {
                 className="bg-white rounded-3xl p-6 md:p-8 border border-gray-200 hover:border-secondary hover:shadow-md transition-all cursor-pointer"
               >
                 <div className="mb-6 w-12 h-12 bg-unifal-bg rounded-full flex items-center justify-center">
-                   <span className="material-symbols-outlined text-primary text-2xl">layers</span>
+                   <span className="material-symbols-outlined text-primary text-2xl" aria-hidden="true">layers</span>
                 </div>
                 <h3 className="font-bold text-xl mb-3 text-gray-900">Disciplinas</h3>
                 <p className="text-gray-600 text-base leading-relaxed">Acesse ementas, cargas horárias, pré-requisitos e planos de ensino com facilidade.</p>
@@ -251,7 +251,7 @@ const HomePage = () => {
                 className="bg-white rounded-3xl p-6 md:p-8 border border-gray-200 hover:border-secondary hover:shadow-md transition-all cursor-pointer"
               >
                 <div className="mb-6 w-12 h-12 bg-unifal-bg rounded-full flex items-center justify-center">
-                   <span className="material-symbols-outlined text-primary text-2xl">school</span>
+                   <span className="material-symbols-outlined text-primary text-2xl" aria-hidden="true">school</span>
                 </div>
                 <h3 className="font-bold text-xl mb-3 text-gray-900">Corpo Docente</h3>
                 <p className="text-gray-600 text-base leading-relaxed">Consulte os professores do curso, suas titulações e áreas de atuação.</p>
@@ -264,7 +264,7 @@ const HomePage = () => {
                 className="bg-white rounded-3xl p-6 md:p-8 border border-gray-200 hover:border-secondary hover:shadow-md transition-all cursor-pointer"
               >
                 <div className="mb-6 w-12 h-12 bg-unifal-bg rounded-full flex items-center justify-center">
-                   <span className="material-symbols-outlined text-primary text-2xl">gavel</span>
+                   <span className="material-symbols-outlined text-primary text-2xl" aria-hidden="true">gavel</span>
                 </div>
                 <h3 className="font-bold text-xl mb-3 text-gray-900">Regulamentos</h3>
                 <p className="text-gray-600 text-base leading-relaxed">Encontre normas de TCC, resoluções de estágio e regimentos internos em um só lugar.</p>
@@ -370,7 +370,7 @@ const HomePage = () => {
               <div className="text-center pt-8">
                 <div className="inline-block p-8 bg-white border border-gray-200 rounded-3xl shadow-sm max-w-2xl">
                   <p className="text-lg md:text-xl font-medium text-gray-800 mb-5">
-                    🚀 Pronto para facilitar sua rotina acadêmica?
+                    <span role="img" aria-label="foguete">🚀</span> Pronto para facilitar sua rotina acadêmica?
                   </p>
                   <button 
                     onClick={() => {
