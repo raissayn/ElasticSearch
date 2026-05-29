@@ -289,7 +289,7 @@ const HomePage = () => {
                   <div className="inline-flex items-center justify-center w-12 h-12 bg-unifal-bg text-primary rounded-2xl">
                     <span className="material-symbols-outlined text-2xl font-bold" aria-hidden="true">lightbulb</span>
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-950">Como Surgiu <span role="img" aria-label="lâmpada">💡</span></h3>
+                  <h3 className="text-2xl font-bold text-gray-950">Como Surgiu</h3>
                   <p className="text-gray-600 leading-relaxed text-base">
                     Encontrar informações precisas dentro dos portais da universidade sempre foi um desafio para os estudantes. Horas gastas procurando por uma resolução de estágio específica, tentando descobrir o pré-requisito de uma disciplina ou buscando a área de atuação de um professor geravam frustração. O <strong>UniSearch</strong> surgiu justamente para resolver essa dor. Desenvolvida nesta primeira etapa para o curso de <strong>Ciência da Computação da UNIFAL-MG</strong>, a plataforma centraliza e simplifica o acesso à informação.
                   </p>
@@ -318,7 +318,7 @@ const HomePage = () => {
                   <div className="inline-flex items-center justify-center w-12 h-12 bg-unifal-bg text-primary rounded-2xl">
                     <span className="material-symbols-outlined text-2xl font-bold" aria-hidden="true">search</span>
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-950">O que a Plataforma Faz <span role="img" aria-label="lupa">🔍</span></h3>
+                  <h3 className="text-2xl font-bold text-gray-950">O que a Plataforma Faz</h3>
                   <p className="text-gray-600 leading-relaxed text-base">
                     Nós indexamos e processamos documentos universitários complexos (como PDFs de regulamentos, planos pedagógicos de disciplinas e regimentos internos) e os tornamos instantaneamente buscáveis por relevância. Em segundos, você encontra o que precisa sem precisar ler dezenas de páginas.
                   </p>
@@ -343,7 +343,7 @@ const HomePage = () => {
                   <div className="inline-flex items-center justify-center w-12 h-12 bg-unifal-bg text-primary rounded-2xl">
                     <span className="material-symbols-outlined text-2xl font-bold" aria-hidden="true">auto_awesome</span>
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-950">Nosso Diferencial <span role="img" aria-label="brilho">✨</span></h3>
+                  <h3 className="text-2xl font-bold text-gray-950">Nosso Diferencial</h3>
                   <p className="text-gray-600 leading-relaxed text-base">
                     Diferente de uma busca comum, o UniSearch utiliza <strong>busca inteligente baseada em Elasticsearch</strong>, oferecendo filtros específicos para <em>Disciplinas</em>, <em>Regulamentos</em> e <em>Corpo Docente</em> em uma interface moderna, rápida e totalmente adaptada para computadores e celulares.
                   </p>
