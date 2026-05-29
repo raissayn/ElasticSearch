@@ -19,9 +19,9 @@ export default {
         'on-surface-variant': '#d1d5db',
       },
       fontFamily: {
-        sans: ['"Public Sans"', 'sans-serif'],
-        display: ['"Public Sans"', 'sans-serif'],
-        body: ['"Public Sans"', 'sans-serif'],
+        sans: ['"Google Sans Flex"', 'sans-serif'],
+        display: ['"Google Sans Flex"', 'sans-serif'],
+        body: ['"Google Sans Flex"', 'sans-serif'],
       },
     },
   },
