@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
-import { vi } from 'vitest';
+import { vi, afterEach } from 'vitest';
 import HomePage from './HomePage';
 import { SearchProvider } from '../contexts/SearchContext';
 
