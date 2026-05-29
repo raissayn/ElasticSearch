@@ -287,9 +287,9 @@ const HomePage = () => {
               <div className="flex flex-col md:flex-row items-center gap-12 md:gap-16">
                 <div className="flex-1 space-y-4">
                   <div className="inline-flex items-center justify-center w-12 h-12 bg-unifal-bg text-primary rounded-2xl">
-                    <span className="material-symbols-outlined text-2xl font-bold">lightbulb</span>
+                    <span className="material-symbols-outlined text-2xl font-bold" aria-hidden="true">lightbulb</span>
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-950">Como Surgiu 💡</h3>
+                  <h3 className="text-2xl font-bold text-gray-950">Como Surgiu <span role="img" aria-label="lâmpada">💡</span></h3>
                   <p className="text-gray-600 leading-relaxed text-base">
                     Encontrar informações precisas dentro dos portais da universidade sempre foi um desafio para os estudantes. Horas gastas procurando por uma resolução de estágio específica, tentando descobrir o pré-requisito de uma disciplina ou buscando a área de atuação de um professor geravam frustração. O <strong>UniSearch</strong> surgiu justamente para resolver essa dor. Desenvolvida nesta primeira etapa para o curso de <strong>Ciência da Computação da UNIFAL-MG</strong>, a plataforma centraliza e simplifica o acesso à informação.
                   </p>
@@ -305,7 +305,7 @@ const HomePage = () => {
                       <div className="h-3 w-4/6 bg-gray-200 rounded"></div>
                       <div className="pt-2 flex justify-between items-center border-t border-gray-100">
                         <span className="text-xs text-primary font-bold">UNIFAL-MG</span>
-                        <span className="material-symbols-outlined text-secondary text-lg">check_circle</span>
+                        <span className="material-symbols-outlined text-secondary text-lg" aria-hidden="true">check_circle</span>
                       </div>
                     </div>
                   </div>
@@ -316,9 +316,9 @@ const HomePage = () => {
               <div className="flex flex-col md:flex-row-reverse items-center gap-12 md:gap-16">
                 <div className="flex-1 space-y-4">
                   <div className="inline-flex items-center justify-center w-12 h-12 bg-unifal-bg text-primary rounded-2xl">
-                    <span className="material-symbols-outlined text-2xl font-bold">search</span>
+                    <span className="material-symbols-outlined text-2xl font-bold" aria-hidden="true">search</span>
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-950">O que a Plataforma Faz 🔍</h3>
+                  <h3 className="text-2xl font-bold text-gray-950">O que a Plataforma Faz <span role="img" aria-label="lupa">🔍</span></h3>
                   <p className="text-gray-600 leading-relaxed text-base">
                     Nós indexamos e processamos documentos universitários complexos (como PDFs de regulamentos, planos pedagógicos de disciplinas e regimentos internos) e os tornamos instantaneamente buscáveis por relevância. Em segundos, você encontra o que precisa sem precisar ler dezenas de páginas.
                   </p>
@@ -328,7 +328,7 @@ const HomePage = () => {
                     <div className="absolute top-4 left-4 w-20 h-20 rounded-full bg-primary opacity-20 blur-xl"></div>
                     <div className="relative w-full bg-white p-5 rounded-2xl border border-gray-200 shadow-sm transform rotate-2 hover:rotate-0 transition-transform duration-300 flex flex-col items-center justify-center text-center space-y-3">
                       <div className="w-12 h-12 bg-unifal-bg text-primary rounded-full flex items-center justify-center">
-                        <span className="material-symbols-outlined text-primary text-3xl">search_insights</span>
+                        <span className="material-symbols-outlined text-primary text-3xl" aria-hidden="true">search_insights</span>
                       </div>
                       <div className="h-3 w-1/2 bg-gray-200 rounded"></div>
                       <div className="text-xs font-semibold text-secondary">Busca Semântica Rápida</div>
@@ -341,9 +341,9 @@ const HomePage = () => {
               <div className="flex flex-col md:flex-row items-center gap-12 md:gap-16">
                 <div className="flex-1 space-y-4">
                   <div className="inline-flex items-center justify-center w-12 h-12 bg-unifal-bg text-primary rounded-2xl">
-                    <span className="material-symbols-outlined text-2xl font-bold">auto_awesome</span>
+                    <span className="material-symbols-outlined text-2xl font-bold" aria-hidden="true">auto_awesome</span>
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-950">Nosso Diferencial ✨</h3>
+                  <h3 className="text-2xl font-bold text-gray-950">Nosso Diferencial <span role="img" aria-label="brilho">✨</span></h3>
                   <p className="text-gray-600 leading-relaxed text-base">
                     Diferente de uma busca comum, o UniSearch utiliza <strong>busca inteligente baseada em Elasticsearch</strong>, oferecendo filtros específicos para <em>Disciplinas</em>, <em>Regulamentos</em> e <em>Corpo Docente</em> em uma interface moderna, rápida e totalmente adaptada para computadores e celulares.
                   </p>
