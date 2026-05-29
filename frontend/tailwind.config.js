@@ -19,9 +19,9 @@ export default {
         'on-surface-variant': '#d1d5db',
       },
       fontFamily: {
-        sans: ['"Google Sans Flex"', 'sans-serif'],
-        display: ['"Google Sans Flex"', 'sans-serif'],
-        body: ['"Google Sans Flex"', 'sans-serif'],
+        sans: ['"Google Sans Flex"', '"Noto Color Emoji"', 'sans-serif'],
+        display: ['"Google Sans Flex"', '"Noto Color Emoji"', 'sans-serif'],
+        body: ['"Google Sans Flex"', '"Noto Color Emoji"', 'sans-serif'],
       },
     },
   },
