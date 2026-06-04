@@ -40,6 +40,22 @@ class EsClient:
             "from_": from_value,
             "size": page_size,
             "query": query_body,
+            "collapse": {
+                "field": "source_id"
+            },
+            "highlight": {
+                "type": "unified",
+                "fields": {
+                    "conteudo": {"fragment_size": 250, "number_of_fragments": 1},
+                    "ementa": {"fragment_size": 250, "number_of_fragments": 1},
+                    "nome_disciplina": {"number_of_fragments": 0},
+                    "titulo_documento": {"number_of_fragments": 0},
+                    "titulo_secao": {"number_of_fragments": 0}
+                },
+                "pre_tags": ["<mark>"],
+                "post_tags": ["</mark>"],
+                "require_field_match": False
+            }
         }
 
         if sort_by == "recent":

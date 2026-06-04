@@ -70,6 +70,9 @@ def extract_pages(pdf_path: Path) -> list[tuple[int, str]]:
 
 def normalize_text(content: str) -> str:
     content = content.replace("\x00", " ")
+    # Remove multiple dots (common in TOCs)
+    content = re.sub(r"\.{2,}", " ", content)
+    # Remove multiple spaces
     content = re.sub(r"\s+", " ", content)
     return content.strip()
 
@@ -142,7 +145,7 @@ def build_documents_for_source(source: dict[str, Any], pages: list[tuple[int, st
                     **base_doc,
                     "document_id": document_id,
                     "tipo_conteudo": "secao_texto",
-                    "titulo_secao": f"Página {page_number}",
+                    "titulo_secao": "",
                     "conteudo": page_text,
                 }
             )
