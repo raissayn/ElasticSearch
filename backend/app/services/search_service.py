@@ -13,6 +13,10 @@ class SearchService:
         max_score = hits_obj.get("max_score") or 0.0
         total = hits_obj.get("total", {}).get("value", 0)
 
+        # Use cardinality aggregation for the total if it exists
+        if "aggregations" in response and "total_collapsed" in response["aggregations"]:
+            total = response["aggregations"]["total_collapsed"].get("value", total)
+
         results = []
         for hit in hits_obj["hits"]:
             src = hit["_source"]
