@@ -21,6 +21,7 @@ const ResultCard = ({
   url_documento,
   score,
   max_score,
+  highlight,
 }) => {
   const isDiscipline = tipo_conteudo === "disciplina";
   const isSection = tipo_conteudo === "secao_texto";
@@ -29,8 +30,11 @@ const ResultCard = ({
   // Determine display title
   let displayTitle = titulo_documento;
   if (isDiscipline && nome_disciplina) displayTitle = nome_disciplina;
-  if (isSection && titulo_secao) displayTitle = titulo_secao;
+  if (isSection && titulo_secao && !titulo_secao.toLowerCase().startsWith("página")) displayTitle = titulo_secao;
   if (isPerson && nome_pessoa) displayTitle = nome_pessoa;
+
+  // Header display context (Course or Document)
+  const headerContext = curso || (displayTitle !== titulo_documento ? titulo_documento : "Documento");
 
   // Determine icon
   let icon = "description";
@@ -38,12 +42,12 @@ const ResultCard = ({
   if (isPerson) icon = "person";
   if (isSection) icon = "article";
 
-  // Determine main body text
-  let bodyText = ementa || conteudo;
-  if (isPerson) {
+  // Determine main body text (prioritize highlight for better snippets)
+  let bodyText = highlight || ementa || conteudo;
+  if (!highlight && isPerson) {
       bodyText = [cargo, titulacao, area_atuacao].filter(Boolean).join(" • ");
   }
-
+  
   const relevancePercent = max_score > 0 ? Math.round((score / max_score) * 100) : 0;
 
   const handleClick = () => {
@@ -57,7 +61,7 @@ const ResultCard = ({
       onClick={handleClick}
       className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-5 md:p-6 hover:border-secondary dark:hover:border-secondary hover:shadow-md transition-all cursor-pointer group"
     >
-      {/* Header: course + relevance */}
+      {/* Header: context + relevance */}
       <div className="flex justify-between items-start mb-3">
         <div className="flex items-center gap-3 min-w-0">
           <div className="w-10 h-10 bg-unifal-bg dark:bg-gray-700 rounded-full flex shrink-0 items-center justify-center text-primary dark:text-secondary">
@@ -67,7 +71,7 @@ const ResultCard = ({
           </div>
           <div className="min-w-0">
             <span className="font-bold text-gray-900 dark:text-on-surface line-clamp-1 leading-tight block">
-              {curso || titulo_documento || "Documento"}
+              {headerContext}
             </span>
             {periodo && (
               <span className="text-xs text-gray-500 dark:text-gray-400 font-medium">{periodo}º Período</span>
@@ -104,12 +108,13 @@ const ResultCard = ({
       {/* Body / Summary */}
       {bodyText && (
         <div className="mb-4">
-          {isDiscipline && ementa && (
+          {isDiscipline && ementa && !highlight && (
             <span className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Ementa</span>
           )}
-          <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed line-clamp-3 mt-0.5">
-            {bodyText}
-          </p>
+          <p 
+            className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed line-clamp-3 mt-0.5"
+            dangerouslySetInnerHTML={{ __html: bodyText }}
+          />
         </div>
       )}
 

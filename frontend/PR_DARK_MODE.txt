@@ -1,0 +1,35 @@
+# Implementação de Modo Escuro (Night Mode)
+
+## 🚀 Resumo das Alterações
+Esta PR adiciona suporte nativo a Modo Escuro (Dark Mode) em toda a aplicação UniSearch. A implementação utiliza o sistema de classes do Tailwind CSS, garantindo uma interface moderna, confortável para uso noturno e com persistência de preferência do usuário.
+
+## 🛠️ Mudanças Realizadas
+
+### 1. Núcleo de Tema (Context API)
+- **`ThemeContext.jsx`**: Criado provedor de contexto para gerenciar o estado global do tema (`light` vs `dark`).
+- **Persistência**: Implementada lógica de salvamento automático no `localStorage`, respeitando a escolha do usuário em visitas futuras.
+- **Detecção de Sistema**: Configurado para detectar e aplicar automaticamente a preferência de tema do sistema operacional/navegador no primeiro acesso.
+
+### 2. Interface e Componentes (UI/UX)
+- **`ThemeToggle.jsx`**: Novo componente de botão adicionado à Navbar com ícones dinâmicos (Sol/Lua) e transições suaves.
+- **`ResultCard.jsx` & `Pagination.jsx`**: Atualizados com variantes `dark:` para garantir contraste e legibilidade em fundos escuros.
+- **`HomePage.jsx`**: Refatoração das seções de Hero, Busca e Sobre para suportar cores adaptativas e gradientes otimizados para o modo noturno.
+
+### 3. Estilização Global
+- **`index.css`**: Adicionada transição suave global de cores (`transition-colors duration-300`) para evitar flashes bruscos de luz ao alternar o tema.
+- **Tailwind Config**: Confirmada a estratégia `darkMode: 'class'` para controle total via JavaScript.
+
+## 📁 Arquivos Criados/Modificados
+- `frontend/src/contexts/ThemeContext.jsx` (Novo)
+- `frontend/src/components/ThemeToggle.jsx` (Novo)
+- `frontend/src/App.jsx` (Configuração do Provider)
+- `frontend/src/pages/HomePage.jsx` (Estilos adaptativos)
+- `frontend/src/components/ResultCard.jsx` (Estilos adaptativos)
+- `frontend/src/components/Pagination.jsx` (Estilos adaptativos)
+- `frontend/src/index.css` (Base e transições)
+
+## ✅ Checklist de Validação
+- [x] O tema persiste após atualizar a página? Sim.
+- [x] O botão de alternância é visível e funcional em dispositivos móveis? Sim.
+- [x] A legibilidade dos resultados de busca foi mantida no fundo escuro? Sim.
+- [x] As cores originais (Modo Claro) permanecem idênticas? Sim.
