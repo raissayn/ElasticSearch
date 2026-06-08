@@ -2,3 +2,7 @@
 docs/
 skills-lock.json
 venv/
+
+.venv/
+
+__pycache__/
