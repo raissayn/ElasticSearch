@@ -35,6 +35,9 @@ class Result(BaseModel):
     titulacao: str = ""
     area_atuacao: str = ""
 
+    # Highlight field
+    highlight: Optional[str] = None
+
 
 class SearchResponse(BaseModel):
     results: list[Result]

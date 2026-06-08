@@ -6,7 +6,10 @@
 
 @layer base {
   body {
-    @apply bg-surface text-on-surface font-sans;
+    @apply bg-[#fafafa] text-gray-900 font-sans transition-colors duration-300;
+  }
+  .dark body {
+    @apply bg-surface text-on-surface;
   }
 }
 
@@ -56,4 +59,8 @@
   .material-symbols-outlined {
     font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
   }
+}
+
+mark {
+  @apply bg-yellow-200 dark:bg-secondary/40 text-gray-900 dark:text-white rounded-sm px-0.5 font-semibold;
 }
