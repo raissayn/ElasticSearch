@@ -18,16 +18,7 @@ class EsClient:
         page_size = settings.page_size
         from_value = ((page if page else 1) - 1) * page_size
 
-        # Fields where we want typo tolerance
-        fuzzy_fields = [
-            "conteudo",
-            "ementa",
-            "nome_disciplina^3",
-            "titulo_documento^2",
-            "titulo_secao^2",
-            "nome_pessoa^2",
-            "area_atuacao",
-        ]
+        search_fields = list(settings.boosted_search_fields)
 
         must_query = {
             "bool": {
@@ -35,20 +26,42 @@ class EsClient:
                     {
                         "multi_match": {
                             "query": query,
-                            "fields": list(settings.boosted_search_fields),
-                            "boost": 2.0,
+                            "fields": search_fields,
+                            "type": "phrase",
+                            "boost": 4.0,
                         }
                     },
                     {
                         "multi_match": {
                             "query": query,
-                            "fields": fuzzy_fields,
-                            "fuzziness": "AUTO",
-                            "prefix_length": 2,
-                            "boost": 1.0,
+                            "fields": search_fields,
+                            "type": "best_fields",
+                            "minimum_should_match": "2<75%",
+                            "boost": 2.5,
                         }
                     },
-                ]
+                    {
+                        "multi_match": {
+                            "query": query,
+                            "fields": search_fields,
+                            "type": "bool_prefix",
+                            "minimum_should_match": "2<75%",
+                            "boost": 1.5,
+                        }
+                    },
+                    {
+                        "multi_match": {
+                            "query": query,
+                            "fields": search_fields,
+                            "fuzziness": "AUTO",
+                            "prefix_length": 2,
+                            "max_expansions": 20,
+                            "minimum_should_match": "2<75%",
+                            "boost": 0.7,
+                        }
+                    },
+                ],
+                "minimum_should_match": 1,
             }
         }
 
