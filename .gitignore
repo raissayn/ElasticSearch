@@ -2,3 +2,8 @@
 docs/
 skills-lock.json
 venv/
+
+.venv/
+__pycache__/
+*.py[cod]
+
