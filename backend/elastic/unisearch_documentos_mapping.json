@@ -2,15 +2,39 @@
   "settings": {
     "analysis": {
       "filter": {
-        "pt_stop": { "type": "stop", "stopwords": "_portuguese_" },
-        "pt_stemmer": { "type": "stemmer", "language": "light_portuguese" }
+        "pt_stop": {
+          "type": "stop",
+          "stopwords": "_portuguese_"
+        },
+        "pt_stemmer": {
+          "type": "stemmer",
+          "language": "light_portuguese"
+        }
       },
       "analyzer": {
         "unisearch_pt": {
           "type": "custom",
-          "char_filter": ["html_strip"],
+          "char_filter": [
+            "html_strip"
+          ],
           "tokenizer": "standard",
-          "filter": ["lowercase", "asciifolding", "pt_stop", "pt_stemmer"]
+          "filter": [
+            "lowercase",
+            "asciifolding",
+            "pt_stop",
+            "pt_stemmer"
+          ]
+        },
+        "unisearch_suggest": {
+          "type": "custom",
+          "char_filter": [
+            "html_strip"
+          ],
+          "tokenizer": "standard",
+          "filter": [
+            "lowercase",
+            "asciifolding"
+          ]
         }
       }
     }
@@ -18,35 +42,130 @@
   "mappings": {
     "dynamic": false,
     "properties": {
-      "document_id":        { "type": "keyword" },
-      "source_id":          { "type": "keyword" },
-      "tipo_documento":     { "type": "keyword" },
-      "tipo_conteudo":      { "type": "keyword" },
-      "titulo_documento":   { "type": "text", "analyzer": "unisearch_pt",
-                              "fields": { "keyword": { "type": "keyword" } } },
-      "curso":              { "type": "keyword" },
-      "instituicao":        { "type": "keyword" },
-      "ano_vigencia":       { "type": "integer" },
-      "resolucao":          { "type": "keyword" },
-      "titulo_secao":       { "type": "text", "analyzer": "unisearch_pt" },
-      "conteudo":           { "type": "text", "analyzer": "unisearch_pt" },
-      "nome_disciplina":    { "type": "text", "analyzer": "unisearch_pt",
-                              "fields": { "keyword": { "type": "keyword" } } },
-      "periodo":            { "type": "integer" },
-      "tipo_disciplina":    { "type": "keyword" },
-      "pre_requisitos":     { "type": "keyword" },
-      "ementa":             { "type": "text", "analyzer": "unisearch_pt" },
-      "carga_horaria_total":    { "type": "integer" },
-      "carga_horaria_teorica":  { "type": "integer" },
-      "carga_horaria_pratica":  { "type": "integer" },
-      "nome_pessoa":        { "type": "text", "analyzer": "unisearch_pt" },
-      "cargo":              { "type": "keyword" },
-      "titulacao":          { "type": "keyword" },
-      "area_atuacao":       { "type": "text", "analyzer": "unisearch_pt" },
-      "pagina":             { "type": "integer" },
-      "url_documento":      { "type": "keyword" },
-      "tags":               { "type": "keyword" },
-      "indexado_em":        { "type": "date" }
+      "document_id": {
+        "type": "keyword"
+      },
+      "source_id": {
+        "type": "keyword"
+      },
+      "tipo_documento": {
+        "type": "keyword"
+      },
+      "tipo_conteudo": {
+        "type": "keyword"
+      },
+      "titulo_documento": {
+        "type": "text",
+        "analyzer": "unisearch_pt",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          },
+          "suggest": {
+            "type": "text",
+            "analyzer": "unisearch_suggest"
+          }
+        }
+      },
+      "curso": {
+        "type": "keyword"
+      },
+      "instituicao": {
+        "type": "keyword"
+      },
+      "ano_vigencia": {
+        "type": "integer"
+      },
+      "resolucao": {
+        "type": "keyword"
+      },
+      "titulo_secao": {
+        "type": "text",
+        "analyzer": "unisearch_pt",
+        "fields": {
+          "suggest": {
+            "type": "text",
+            "analyzer": "unisearch_suggest"
+          }
+        }
+      },
+      "conteudo": {
+        "type": "text",
+        "analyzer": "unisearch_pt"
+      },
+      "nome_disciplina": {
+        "type": "text",
+        "analyzer": "unisearch_pt",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          },
+          "suggest": {
+            "type": "text",
+            "analyzer": "unisearch_suggest"
+          }
+        }
+      },
+      "periodo": {
+        "type": "integer"
+      },
+      "tipo_disciplina": {
+        "type": "keyword"
+      },
+      "pre_requisitos": {
+        "type": "keyword"
+      },
+      "ementa": {
+        "type": "text",
+        "analyzer": "unisearch_pt",
+        "fields": {
+          "suggest": {
+            "type": "text",
+            "analyzer": "unisearch_suggest"
+          }
+        }
+      },
+      "carga_horaria_total": {
+        "type": "integer"
+      },
+      "carga_horaria_teorica": {
+        "type": "integer"
+      },
+      "carga_horaria_pratica": {
+        "type": "integer"
+      },
+      "nome_pessoa": {
+        "type": "text",
+        "analyzer": "unisearch_pt",
+        "fields": {
+          "suggest": {
+            "type": "text",
+            "analyzer": "unisearch_suggest"
+          }
+        }
+      },
+      "cargo": {
+        "type": "keyword"
+      },
+      "titulacao": {
+        "type": "keyword"
+      },
+      "area_atuacao": {
+        "type": "text",
+        "analyzer": "unisearch_pt"
+      },
+      "pagina": {
+        "type": "integer"
+      },
+      "url_documento": {
+        "type": "keyword"
+      },
+      "tags": {
+        "type": "keyword"
+      },
+      "indexado_em": {
+        "type": "date"
+      }
     }
   }
 }
