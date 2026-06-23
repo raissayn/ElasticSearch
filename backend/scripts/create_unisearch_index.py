@@ -28,7 +28,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Create unisearch_documentos index.")
     parser.add_argument(
         "--mapping",
-        default="elastic/unisearch_documentos_mapping.json",
+        default="backend/elastic/unisearch_documentos_mapping.json",
         help="Path to mapping JSON file.",
     )
     parser.add_argument(

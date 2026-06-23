@@ -1,6 +1,262 @@
+import unicodedata
+
 from elasticsearch import Elasticsearch
 
 from app.core.config import settings
+
+FUZZY_SEARCH_FIELDS = [
+    "conteudo",
+    "ementa",
+    "nome_disciplina^3",
+    "titulo_documento^2",
+    "titulo_secao^2",
+    "nome_pessoa^2",
+    "area_atuacao",
+]
+
+PREFIX_SEARCH_FIELDS = {
+    "nome_disciplina": 3,
+    "titulo_documento": 2,
+    "titulo_secao": 2,
+    "nome_pessoa": 2,
+}
+
+SUGGESTION_FIELDS = (
+    "nome_disciplina.suggest",
+    "titulo_documento.suggest",
+    "titulo_secao.suggest",
+    "nome_pessoa.suggest",
+    "ementa.suggest",
+)
+
+MIN_SUGGESTION_SCORE = 0.01
+MIN_TERM_SUGGESTION_SCORE = 0.8
+HIGH_CONFIDENCE_SUGGESTION_FIELDS = {
+    "nome_disciplina.suggest",
+    "titulo_documento.suggest",
+    "titulo_secao.suggest",
+    "nome_pessoa.suggest",
+}
+
+
+def build_search_query(query: str, tipo_conteudo: str = "") -> dict:
+    # Layer exact, fuzzy, and prefix clauses so exact matches keep priority while
+    # typos and incomplete important names still have a controlled path to match.
+    search_query = {
+        "bool": {
+            "should": [
+                {
+                    "multi_match": {
+                        "_name": "exact_boosted_fields",
+                        "query": query,
+                        "fields": list(settings.boosted_search_fields),
+                        "boost": 2.0,
+                    }
+                },
+                {
+                    "multi_match": {
+                        "_name": "controlled_fuzzy_fields",
+                        "query": query,
+                        "fields": FUZZY_SEARCH_FIELDS,
+                        "type": "best_fields",
+                        "operator": "and",
+                        "minimum_should_match": "75%",
+                        "fuzziness": "AUTO:4,7",
+                        "prefix_length": 1,
+                        "max_expansions": 30,
+                        "fuzzy_transpositions": True,
+                        "boost": 0.9,
+                    }
+                },
+                {
+                    "dis_max": {
+                        "_name": "important_prefix_fields",
+                        "tie_breaker": 0.2,
+                        "queries": [
+                            {
+                                "match_phrase_prefix": {
+                                    field: {
+                                        "query": query,
+                                        "max_expansions": 20,
+                                        "boost": boost,
+                                    }
+                                }
+                            }
+                            for field, boost in PREFIX_SEARCH_FIELDS.items()
+                        ],
+                    }
+                },
+            ],
+            "minimum_should_match": 1,
+        }
+    }
+
+    if not tipo_conteudo:
+        return search_query
+
+    return {
+        "bool": {
+            "must": search_query,
+            "filter": {"term": {"tipo_conteudo": tipo_conteudo}},
+        }
+    }
+
+
+def build_search_suggest(query: str) -> dict:
+    suggest = {}
+
+    for field in SUGGESTION_FIELDS:
+        key = field.replace('.', '_')
+        suggest[f"did_you_mean_{key}"] = {
+            "text": query,
+            "phrase": {
+                "field": field,
+                "size": 1,
+                "gram_size": 2,
+                "confidence": 0.7,
+                "direct_generator": [
+                    {
+                        "field": field,
+                        "suggest_mode": "missing",
+                        "min_word_length": 3,
+                    }
+                ],
+            },
+        }
+        suggest[f"did_you_mean_term_{key}"] = {
+            "text": query,
+            "term": {
+                "field": field,
+                "suggest_mode": "missing",
+                "min_word_length": 3,
+                "size": 2,
+            },
+        }
+
+    return suggest
+
+
+def should_return_suggestion(total: int) -> bool:
+    return True
+
+
+def normalize_suggestion_text(value: str) -> str:
+    normalized = unicodedata.normalize("NFKD", value.strip().casefold())
+    return "".join(char for char in normalized if not unicodedata.combining(char))
+
+
+def suggestion_field_from_name(name: str) -> str:
+    prefix = "did_you_mean_term_"
+    if not name.startswith(prefix):
+        return ""
+    return name.removeprefix(prefix).replace("_suggest", ".suggest")
+
+
+def extract_term_suggested_query(response: dict, original_query: str) -> str | None:
+    corrections = {}
+
+    for name, entries in response.get("suggest", {}).items():
+        field = suggestion_field_from_name(name)
+        if not field:
+            continue
+
+        high_confidence_field = field in HIGH_CONFIDENCE_SUGGESTION_FIELDS
+        for entry in entries:
+            original_token = str(entry.get("text", "")).strip()
+            if not original_token:
+                continue
+
+            normalized_original = normalize_suggestion_text(original_token)
+            best_option = None
+            for option in entry.get("options", []):
+                candidate = str(option.get("text", "")).strip()
+                score = float(option.get("score") or 0.0)
+                if (
+                    not candidate
+                    or score < MIN_TERM_SUGGESTION_SCORE
+                    or normalize_suggestion_text(candidate) == normalized_original
+                ):
+                    continue
+
+                rank = (score, high_confidence_field, int(option.get("freq") or 0))
+                if best_option is None or rank > best_option[0]:
+                    best_option = (rank, candidate, high_confidence_field)
+
+            if best_option is None:
+                continue
+
+            current = corrections.get(normalized_original)
+            if current is None or best_option[0] > current[0]:
+                corrections[normalized_original] = best_option
+
+    if not corrections:
+        return None
+
+    has_high_confidence_correction = any(correction[2] for correction in corrections.values())
+    selected = {
+        token: correction
+        for token, correction in corrections.items()
+        if correction[2] or (not has_high_confidence_correction and len(corrections) >= 2)
+    }
+    if not selected:
+        return None
+
+    suggested_tokens = []
+    changed = False
+    for token in original_query.strip().split():
+        correction = selected.get(normalize_suggestion_text(token))
+        if correction is None:
+            suggested_tokens.append(token)
+            continue
+        suggested_tokens.append(correction[1])
+        changed = True
+
+    if not changed:
+        return None
+
+    candidate = " ".join(suggested_tokens).strip()
+    if normalize_suggestion_text(candidate) == normalize_suggestion_text(original_query):
+        return None
+    return candidate
+
+
+def extract_phrase_suggested_query(response: dict, original_query: str, total: int) -> str | None:
+    if total != 0:
+        return None
+
+    normalized_original = normalize_suggestion_text(original_query)
+    best_text = None
+    best_score = -1.0
+
+    for name, entries in response.get("suggest", {}).items():
+        if name.startswith("did_you_mean_term_"):
+            continue
+        for entry in entries:
+            for option in entry.get("options", []):
+                candidate = str(option.get("text", "")).strip()
+                if not candidate or normalize_suggestion_text(candidate) == normalized_original:
+                    continue
+
+                score = float(option.get("score") or 0.0)
+                if score > best_score:
+                    best_text = candidate
+                    best_score = score
+
+    if best_score < MIN_SUGGESTION_SCORE:
+        return None
+
+    return best_text
+
+
+def extract_suggested_query(response: dict, original_query: str, total: int, max_score: float) -> str | None:
+    if not should_return_suggestion(total):
+        return None
+
+    term_suggestion = extract_term_suggested_query(response, original_query)
+    if term_suggestion:
+        return term_suggestion
+
+    return extract_phrase_suggested_query(response, original_query, total)
 
 
 class EsClient:
@@ -14,53 +270,18 @@ class EsClient:
             
         self.client = Elasticsearch(**client_kwargs)
 
-    def search(self, query: str, page: int = 1, sort_by: str = "relevance", tipo_conteudo: str = ""):
+    def search(
+        self,
+        query: str,
+        page: int = 1,
+        sort_by: str = "relevance",
+        tipo_conteudo: str = "",
+        include_suggestions: bool = False,
+    ):
         page_size = settings.page_size
         from_value = ((page if page else 1) - 1) * page_size
 
-        # Fields where we want typo tolerance
-        fuzzy_fields = [
-            "conteudo",
-            "ementa",
-            "nome_disciplina^3",
-            "titulo_documento^2",
-            "titulo_secao^2",
-            "nome_pessoa^2",
-            "area_atuacao",
-        ]
-
-        must_query = {
-            "bool": {
-                "should": [
-                    {
-                        "multi_match": {
-                            "query": query,
-                            "fields": list(settings.boosted_search_fields),
-                            "boost": 2.0,
-                        }
-                    },
-                    {
-                        "multi_match": {
-                            "query": query,
-                            "fields": fuzzy_fields,
-                            "fuzziness": "AUTO",
-                            "prefix_length": 2,
-                            "boost": 1.0,
-                        }
-                    },
-                ]
-            }
-        }
-
-        if tipo_conteudo:
-            query_body = {
-                "bool": {
-                    "must": must_query,
-                    "filter": {"term": {"tipo_conteudo": tipo_conteudo}},
-                }
-            }
-        else:
-            query_body = must_query
+        query_body = build_search_query(query, tipo_conteudo)
 
         search_kwargs = {
             "index": settings.index_name,
@@ -85,6 +306,9 @@ class EsClient:
                 "require_field_match": False
             }
         }
+
+        if include_suggestions:
+            search_kwargs["suggest"] = build_search_suggest(query)
 
         if sort_by == "recent":
             search_kwargs["sort"] = [
