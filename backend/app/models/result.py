@@ -45,3 +45,4 @@ class SearchResponse(BaseModel):
     max_score: float = 0.0
     page: int = 1
     sort_by: str = "relevance"
+    suggested_query: Optional[str] = None

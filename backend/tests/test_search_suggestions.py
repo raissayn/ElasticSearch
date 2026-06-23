@@ -15,9 +15,10 @@ fake_pydantic = types.ModuleType("pydantic")
 
 class BaseModel:
     def __init__(self, **kwargs):
-        for name, value in self.__class__.__dict__.items():
-            if not name.startswith("_") and not callable(value):
-                setattr(self, name, value)
+        for cls in reversed(self.__class__.mro()):
+            for name in getattr(cls, "__annotations__", {}):
+                if name in cls.__dict__ and not name.startswith("_"):
+                    setattr(self, name, cls.__dict__[name])
         for name, value in kwargs.items():
             setattr(self, name, value)
 
@@ -46,17 +47,6 @@ def Query(default, **kwargs):
 fake_fastapi.APIRouter = APIRouter
 fake_fastapi.Query = Query
 sys.modules.setdefault("fastapi", fake_fastapi)
-
-fake_fastapi_responses = types.ModuleType("fastapi.responses")
-
-
-class JSONResponse:
-    def __init__(self, content):
-        self.content = content
-
-
-fake_fastapi_responses.JSONResponse = JSONResponse
-sys.modules.setdefault("fastapi.responses", fake_fastapi_responses)
 
 from app.domain.es_client import EsClient, build_search_suggest, extract_suggested_query
 from app.models.result import SearchResponse
@@ -272,7 +262,11 @@ class SearchSuggestionTests(unittest.TestCase):
             )
         )
 
-    def test_service_default_returns_original_search_response_without_suggested_query(self):
+    def test_search_response_contract_declares_optional_suggested_query(self):
+        self.assertIn("suggested_query", SearchResponse.__annotations__)
+        self.assertIsNone(SearchResponse(results=[]).suggested_query)
+
+    def test_service_default_returns_search_response_with_null_suggested_query(self):
         service = SearchService.__new__(SearchService)
         service.es_client = MagicMock()
         service.es_client.search.return_value = {
@@ -282,10 +276,10 @@ class SearchSuggestionTests(unittest.TestCase):
         result = service.submit_query("calculo")
 
         self.assertIsInstance(result, SearchResponse)
-        self.assertFalse(hasattr(result, "suggested_query"))
+        self.assertIsNone(result.suggested_query)
         service.es_client.search.assert_called_once_with("calculo", 1, "relevance", "", False)
 
-    def test_service_returns_suggested_query_payload_only_when_requested(self):
+    def test_service_returns_search_response_with_suggested_query_only_when_requested(self):
         service = SearchService.__new__(SearchService)
         service.es_client = MagicMock()
         service.es_client.search.return_value = {
@@ -299,13 +293,13 @@ class SearchSuggestionTests(unittest.TestCase):
 
         result = service.submit_query("calclo numerico", include_suggestions=True)
 
-        self.assertIsInstance(result, dict)
-        self.assertEqual(result["suggested_query"], "calculo numerico")
-        self.assertEqual(result["results"], [])
-        self.assertEqual(result["total"], 0)
+        self.assertIsInstance(result, SearchResponse)
+        self.assertEqual(result.suggested_query, "calculo numerico")
+        self.assertEqual(result.results, [])
+        self.assertEqual(result.total, 0)
         service.es_client.search.assert_called_once_with("calclo numerico", 1, "relevance", "", True)
 
-    def test_controller_preserves_default_response_and_returns_json_when_suggestions_requested(self):
+    def test_controller_returns_model_compatible_payload_for_fastapi_validation(self):
         original_service = search_controller.search_service
         fake_service = MagicMock()
         search_controller.search_service = fake_service
@@ -348,7 +342,8 @@ class SearchSuggestionTests(unittest.TestCase):
                 )
             )
 
-            self.assertEqual(result.content, payload)
+            self.assertEqual(result, payload)
+            self.assertFalse(hasattr(result, "content"))
             fake_service.submit_query.assert_called_with("calclo numerico", 1, "relevance", "disciplina", True)
         finally:
             search_controller.search_service = original_service
