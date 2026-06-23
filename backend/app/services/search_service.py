@@ -47,17 +47,15 @@ class SearchService:
 
             results.append(Result(**{k: v for k, v in src.items() if v is not None}))
 
-        search_response = SearchResponse(
+        suggested_query = None
+        if include_suggestions:
+            suggested_query = extract_suggested_query(response, query, total, max_score)
+
+        return SearchResponse(
             results=results,
             total=total,
             max_score=max_score,
             page=page,
             sort_by=sort_by,
+            suggested_query=suggested_query,
         )
-
-        if not include_suggestions:
-            return search_response
-
-        payload = search_response.model_dump()
-        payload["suggested_query"] = extract_suggested_query(response, query, total, max_score)
-        return payload
