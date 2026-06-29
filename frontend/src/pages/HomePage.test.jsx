@@ -1,17 +1,36 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
-import { vi, afterEach } from 'vitest';
+import { vi, afterEach, beforeAll } from 'vitest';
 import HomePage from './HomePage';
 import { SearchProvider } from '../contexts/SearchContext';
+import { ThemeProvider } from '../contexts/ThemeContext';
+
+beforeAll(() => {
+  Object.defineProperty(window, 'matchMedia', {
+    writable: true,
+    value: vi.fn().mockImplementation(query => ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    })),
+  });
+});
 
 const renderHome = () =>
   render(
-    <SearchProvider>
-      <MemoryRouter>
-        <HomePage />
-      </MemoryRouter>
-    </SearchProvider>
+    <ThemeProvider>
+      <SearchProvider>
+        <MemoryRouter>
+          <HomePage />
+        </MemoryRouter>
+      </SearchProvider>
+    </ThemeProvider>
   );
 
 const mockResponse = (overrides = {}) => ({
@@ -212,4 +231,58 @@ test('HomePage scrolls and focuses search input when clicking "Ir para o buscado
   expect(scrollToMock).toHaveBeenCalledWith({ top: 0, behavior: 'smooth' });
   const input = screen.getByPlaceholderText(/Busque por/i);
   expect(document.activeElement).toBe(input);
+});
+
+test('HomePage renders "Você quis dizer" banner and handles suggestion click', async () => {
+  const user = userEvent.setup();
+  const fetchMock = vi
+    .fn()
+    .mockResolvedValueOnce({
+      ok: true,
+      json: async () =>
+        mockResponse({
+          suggested_query: 'calculo numerico',
+        }),
+    })
+    .mockResolvedValueOnce({
+      ok: true,
+      json: async () =>
+        mockResponse({
+          results: [
+            {
+              url_documento: 'doc-2',
+              pagina: 1,
+              tipo_conteudo: 'disciplina',
+              titulo_documento: 'Cálculo Numérico',
+            },
+          ],
+          total: 1,
+        }),
+    });
+
+  vi.stubGlobal('fetch', fetchMock);
+
+  renderHome();
+
+  // Search for typo query
+  await user.type(screen.getByPlaceholderText(/Busque por/i), 'calclo');
+  await user.click(screen.getByRole('button', { name: 'Buscar' }));
+
+  // Check if suggestion banner is displayed
+  const suggestionButton = await screen.findByRole('button', { name: 'calculo numerico' });
+  expect(screen.getByText(/Você quis dizer/i)).toBeDefined();
+
+  // Click the suggestion
+  await user.click(suggestionButton);
+
+  // Check that a second call to fetch was made with the corrected query
+  await waitFor(() => {
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    const lastCall = fetchMock.mock.calls[fetchMock.mock.calls.length - 1][0];
+    expect(lastCall).toContain('query=calculo+numerico');
+  });
+
+  // Verify input is updated
+  const input = screen.getByPlaceholderText(/Busque por/i);
+  expect(input.value).toBe('calculo numerico');
 });
