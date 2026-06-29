@@ -42,7 +42,7 @@ class EsClientQueryTests(unittest.TestCase):
             if clause.get("multi_match", {}).get("_name") == "controlled_fuzzy_fields"
         )
         self.assertEqual(fuzzy_clause["fuzziness"], "AUTO:4,7")
-        self.assertEqual(fuzzy_clause["operator"], "and")
+        self.assertEqual(fuzzy_clause["operator"], "or")
         self.assertEqual(fuzzy_clause["minimum_should_match"], "75%")
         self.assertEqual(fuzzy_clause["prefix_length"], 1)
         self.assertEqual(fuzzy_clause["max_expansions"], 30)

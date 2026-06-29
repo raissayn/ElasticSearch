@@ -1,3 +1,4 @@
+import re
 import unicodedata
 
 from elasticsearch import Elasticsearch
@@ -30,7 +31,7 @@ SUGGESTION_FIELDS = (
 )
 
 MIN_SUGGESTION_SCORE = 0.01
-MIN_TERM_SUGGESTION_SCORE = 0.8
+MIN_TERM_SUGGESTION_SCORE = 0.75
 HIGH_CONFIDENCE_SUGGESTION_FIELDS = {
     "nome_disciplina.suggest",
     "titulo_documento.suggest",
@@ -59,7 +60,7 @@ def build_search_query(query: str, tipo_conteudo: str = "") -> dict:
                         "query": query,
                         "fields": FUZZY_SEARCH_FIELDS,
                         "type": "best_fields",
-                        "operator": "and",
+                        "operator": "or",
                         "minimum_should_match": "75%",
                         "fuzziness": "AUTO:4,7",
                         "prefix_length": 1,
@@ -193,28 +194,40 @@ def extract_term_suggested_query(response: dict, original_query: str) -> str | N
         return None
 
     has_high_confidence_correction = any(correction[2] for correction in corrections.values())
-    selected = {
-        token: correction
-        for token, correction in corrections.items()
-        if correction[2] or (not has_high_confidence_correction and len(corrections) >= 2)
-    }
+    
+    # Selection rule:
+    # 1. If we have at least one high confidence correction, we keep all corrections (to avoid mixed queries)
+    # 2. If we only have low confidence corrections, we require at least 2 corrections to filter out single noisy spelling candidates.
+    if has_high_confidence_correction:
+        selected = corrections
+    else:
+        if len(corrections) >= 2:
+            selected = corrections
+        else:
+            selected = {}
+
     if not selected:
         return None
 
     suggested_tokens = []
     changed = False
-    for token in original_query.strip().split():
-        correction = selected.get(normalize_suggestion_text(token))
-        if correction is None:
-            suggested_tokens.append(token)
+    # Use re.split to tokenize original query, preserving spaces and punctuation
+    for token in re.split(r'(\W+)', original_query):
+        if not token:
             continue
-        suggested_tokens.append(correction[1])
-        changed = True
+        # Only correct alphanumeric words
+        if re.match(r'^\w+$', token):
+            correction = selected.get(normalize_suggestion_text(token))
+            if correction is not None:
+                suggested_tokens.append(correction[1])
+                changed = True
+                continue
+        suggested_tokens.append(token)
 
     if not changed:
         return None
 
-    candidate = " ".join(suggested_tokens).strip()
+    candidate = "".join(suggested_tokens).strip()
     if normalize_suggestion_text(candidate) == normalize_suggestion_text(original_query):
         return None
     return candidate
@@ -248,15 +261,61 @@ def extract_phrase_suggested_query(response: dict, original_query: str, total: i
     return best_text
 
 
+def restore_accents_from_response(suggested_query: str, response: dict) -> str:
+    word_map = {}
+    
+    # Scan all search results source text to map normalized words to their accented versions
+    for hit in response.get("hits", {}).get("hits", []):
+        src = hit.get("_source", {})
+        for field in ["nome_disciplina", "titulo_documento", "titulo_secao", "nome_pessoa", "ementa", "conteudo"]:
+            val = src.get(field)
+            if val and isinstance(val, str):
+                for word in re.findall(r'\w+', val):
+                    normalized = normalize_suggestion_text(word)
+                    if normalized and normalized not in word_map:
+                        word_map[normalized] = word
+                        
+        # Scan highlight fields (which contain matching text segments)
+        highlight = hit.get("highlight", {})
+        for val_list in highlight.values():
+            for val in val_list:
+                clean_text = re.sub(r'<[^>]+>', ' ', val)
+                for word in re.findall(r'\w+', clean_text):
+                    normalized = normalize_suggestion_text(word)
+                    if normalized and normalized not in word_map:
+                        word_map[normalized] = word
+
+    # Reconstruct the suggested query, replacing terms with their original accented forms
+    suggested_tokens = []
+    for token in re.split(r'(\W+)', suggested_query):
+        if not token:
+            continue
+        if re.match(r'^\w+$', token):
+            normalized = normalize_suggestion_text(token)
+            restored = word_map.get(normalized)
+            if restored:
+                if token.islower():
+                    restored = restored.lower()
+                suggested_tokens.append(restored)
+                continue
+        suggested_tokens.append(token)
+        
+    return "".join(suggested_tokens)
+
+
 def extract_suggested_query(response: dict, original_query: str, total: int, max_score: float) -> str | None:
     if not should_return_suggestion(total):
         return None
 
     term_suggestion = extract_term_suggested_query(response, original_query)
     if term_suggestion:
-        return term_suggestion
+        return restore_accents_from_response(term_suggestion, response)
 
-    return extract_phrase_suggested_query(response, original_query, total)
+    phrase_suggestion = extract_phrase_suggested_query(response, original_query, total)
+    if phrase_suggestion:
+        return restore_accents_from_response(phrase_suggestion, response)
+
+    return None
 
 
 class EsClient:
