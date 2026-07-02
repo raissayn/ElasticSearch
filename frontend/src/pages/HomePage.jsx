@@ -17,6 +17,7 @@ const HomePage = () => {
   const [error, setError] = useState(null);
   const [sortBy, setSortBy] = useState("relevance");
   const [currentPage, setCurrentPage] = useState(1);
+  const [suggestedQuery, setSuggestedQuery] = useState(null);
   const totalPages = Math.ceil(total / PAGE_SIZE);
   
   const [category, setCategory] = useState("Tudo");
@@ -49,6 +50,7 @@ const HomePage = () => {
       setTotal(0);
       setMaxScore(0);
       setCurrentPage(1);
+      setSuggestedQuery(null);
       return;
     }
 
@@ -70,6 +72,7 @@ const HomePage = () => {
         query: searchQuery,
         page: String(searchPage),
         sort_by: searchSort,
+        include_suggestions: "true",
       });
       if (tipo) {
         params.append("tipo", tipo);
@@ -83,10 +86,12 @@ const HomePage = () => {
       setResults(data.results || []);
       setTotal(data.total || 0);
       setMaxScore(data.max_score || 0);
+      setSuggestedQuery(data.suggested_query || null);
     } catch (err) {
       setError(err.message);
       setResults([]);
       setTotal(0);
+      setSuggestedQuery(null);
     } finally {
       setIsLoading(false);
     }
@@ -120,7 +125,16 @@ const HomePage = () => {
     setTotal(0);
     setMaxScore(0);
     setCurrentPage(1);
+    setSuggestedQuery(null);
     setError(null);
+  };
+
+  const handleSuggestionClick = async () => {
+    if (suggestedQuery) {
+      setQuery(suggestedQuery);
+      setSuggestedQuery(null);
+      await performSearch(suggestedQuery, sortBy, category, 1);
+    }
   };
 
   return (
@@ -397,6 +411,25 @@ const HomePage = () => {
           <div className="flex justify-center mt-8 md:mt-12 w-full">
             {/* Results List */}
             <div className="w-full max-w-4xl">
+              {/* Sugestão de Busca ("Você quis dizer?") */}
+              {suggestedQuery && !isLoading && (
+                <div className="mb-6 p-4 md:p-5 bg-blue-50/60 dark:bg-sky-950/20 border border-blue-100/80 dark:border-sky-900/30 rounded-3xl flex items-center gap-3.5 shadow-sm animate-in fade-in slide-in-from-top-3 duration-300">
+                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100/50 dark:bg-sky-900/40 text-primary dark:text-secondary shrink-0">
+                    <span className="material-symbols-outlined text-lg select-none">auto_awesome</span>
+                  </div>
+                  <p className="text-sm md:text-base text-gray-700 dark:text-sky-200 font-medium">
+                    Você quis dizer:{" "}
+                    <button
+                      onClick={handleSuggestionClick}
+                      className="font-bold text-primary dark:text-secondary hover:underline underline-offset-4 focus:outline-none transition-all duration-200 hover:scale-[1.01] inline-block text-left"
+                    >
+                      {suggestedQuery}
+                    </button>
+                    ?
+                  </p>
+                </div>
+              )}
+
               <div className="flex justify-between items-center mb-6">
                 <p className="text-sm font-medium text-gray-700 dark:text-on-surface-variant">
                   {isLoading ? "Buscando..." : (

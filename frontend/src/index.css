@@ -62,5 +62,5 @@
 }
 
 mark {
-  @apply bg-yellow-200 dark:bg-secondary/40 text-gray-900 dark:text-white rounded-sm px-0.5 font-semibold;
+  @apply bg-secondary/15 text-primary dark:bg-secondary/25 dark:text-secondary-dim rounded px-1 font-semibold transition-colors duration-200;
 }

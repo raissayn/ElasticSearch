@@ -126,6 +126,25 @@ class SearchSuggestionTests(unittest.TestCase):
             "calculo numerico",
         )
 
+    def test_extract_suggested_query_preserves_punctuation(self):
+        response = {
+            "suggest": {
+                "did_you_mean_term_nome_disciplina_suggest": [
+                    {
+                        "text": "calclo",
+                        "offset": 0,
+                        "length": 6,
+                        "options": [{"text": "calculo", "score": 0.83, "freq": 6}],
+                    }
+                ]
+            }
+        }
+
+        self.assertEqual(
+            extract_suggested_query(response, "calclo, numerico!", total=3, max_score=42.0),
+            "calculo, numerico!",
+        )
+
     def test_extract_suggested_query_prioritizes_important_fields_over_ementa(self):
         response = {
             "suggest": {
@@ -140,7 +159,7 @@ class SearchSuggestionTests(unittest.TestCase):
                         "text": "numerico",
                         "offset": 7,
                         "length": 8,
-                        "options": [{"text": "numericos", "score": 0.87, "freq": 4}],
+                        "options": [],
                     },
                 ],
                 "did_you_mean_term_nome_disciplina_suggest": [
@@ -155,6 +174,12 @@ class SearchSuggestionTests(unittest.TestCase):
                         "offset": 0,
                         "length": 6,
                         "options": [{"text": "calculo", "score": 0.83, "freq": 6}],
+                    },
+                    {
+                        "text": "numerico",
+                        "offset": 7,
+                        "length": 8,
+                        "options": [],
                     },
                 ],
             }
@@ -347,6 +372,24 @@ class SearchSuggestionTests(unittest.TestCase):
             fake_service.submit_query.assert_called_with("calclo numerico", 1, "relevance", "disciplina", True)
         finally:
             search_controller.search_service = original_service
+
+    def test_restore_accents_from_response(self):
+        from app.domain.es_client import restore_accents_from_response
+        response = {
+            "hits": {
+                "hits": [
+                    {
+                        "_source": {
+                            "nome_disciplina": "Programação Funcional",
+                            "ementa": "Cálculo e Álgebra",
+                        }
+                    }
+                ]
+            }
+        }
+        self.assertEqual(restore_accents_from_response("programacao", response), "programação")
+        self.assertEqual(restore_accents_from_response("Programacao", response), "Programação")
+        self.assertEqual(restore_accents_from_response("calculo e programacao!", response), "cálculo e programação!")
 
 
 if __name__ == "__main__":
