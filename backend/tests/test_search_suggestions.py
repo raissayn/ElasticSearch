@@ -324,6 +324,77 @@ class SearchSuggestionTests(unittest.TestCase):
         self.assertEqual(result.total, 0)
         service.es_client.search.assert_called_once_with("calclo numerico", 1, "relevance", "", True)
 
+    def test_service_deduplicates_same_discipline_across_sources(self):
+        service = SearchService.__new__(SearchService)
+        service.es_client = MagicMock()
+        service.es_client.search.return_value = {
+            "hits": {
+                "total": {"value": 2},
+                "max_score": 10.0,
+                "hits": [
+                    {
+                        "_score": 10.0,
+                        "_source": {
+                            "document_id": "ppc-cc-2020-p39-d2",
+                            "source_id": "ppc-cc-2020",
+                            "tipo_conteudo": "disciplina",
+                            "nome_disciplina": "Programação Lógica",
+                            "curso": "Ciência da Computação",
+                            "ementa": "Representação do Conhecimento",
+                        },
+                    },
+                    {
+                        "_score": 8.0,
+                        "_source": {
+                            "document_id": "projeto-pedagogico-p39-d2",
+                            "source_id": "projeto-pedagogico",
+                            "tipo_conteudo": "disciplina",
+                            "nome_disciplina": "Programação Lógica",
+                            "curso": "Ciência da Computação",
+                            "ementa": "Representação do Conhecimento",
+                        },
+                    },
+                ],
+            }
+        }
+
+        result = service.submit_query("Programação Lógica")
+
+        self.assertEqual(len(result.results), 1)
+        self.assertEqual(result.total, 1)
+        self.assertEqual(result.results[0].document_id, "ppc-cc-2020-p39-d2")
+
+    def test_service_keeps_summary_when_highlight_is_only_from_title_fields(self):
+        service = SearchService.__new__(SearchService)
+        service.es_client = MagicMock()
+        service.es_client.search.return_value = {
+            "hits": {
+                "total": {"value": 1},
+                "max_score": 10.0,
+                "hits": [
+                    {
+                        "_score": 10.0,
+                        "_source": {
+                            "document_id": "ppc-cc-2020-p39-d2",
+                            "source_id": "ppc-cc-2020",
+                            "tipo_conteudo": "disciplina",
+                            "nome_disciplina": "Programação Lógica",
+                            "curso": "Ciência da Computação",
+                            "ementa": "Representação do Conhecimento",
+                        },
+                        "highlight": {
+                            "nome_disciplina": ["<mark>Programação</mark> Lógica"]
+                        },
+                    }
+                ],
+            }
+        }
+
+        result = service.submit_query("Programação Lógica")
+
+        self.assertEqual(result.results[0].ementa, "Representação do Conhecimento")
+        self.assertIsNone(result.results[0].highlight)
+
     def test_controller_returns_model_compatible_payload_for_fastapi_validation(self):
         original_service = search_controller.search_service
         fake_service = MagicMock()
