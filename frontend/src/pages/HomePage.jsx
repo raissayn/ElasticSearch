@@ -457,7 +457,7 @@ const HomePage = () => {
                 ) : results.length > 0 ? (
                   results.map((item, index) => (
                     <ResultCard 
-                      key={item.url_documento + index}
+                      key={item.document_id || [item.source_id || item.url_documento, item.pagina || index].join('-')}
                       {...item}
                       max_score={maxScore}
                     />
