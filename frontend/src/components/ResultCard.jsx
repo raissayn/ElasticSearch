@@ -1,4 +1,4 @@
-import { FileText, GraduationCap, User, Newspaper, Bookmark, Clock, Tag, ExternalLink } from 'lucide-react';
+import { FileText, GraduationCap, User, Newspaper, Bookmark, Clock, ExternalLink } from 'lucide-react';
 import { useSavedItems } from '../contexts/SavedItemsContext';
 import { getSavedKey } from '../utils/savedItems';
 
@@ -107,17 +107,8 @@ const ResultCard = ({
           </div>
         </div>
 
-        {/* Relevance indicator */}
+        {/* Save action */}
         <div className="flex items-center gap-2 shrink-0 ml-3">
-          <div className="flex flex-col items-end">
-            <span className="text-xs font-bold text-primary dark:text-secondary">{relevancePercent}%</span>
-            <div className="w-16 h-1.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-primary dark:bg-secondary rounded-full transition-all duration-500"
-                style={{ width: `${relevancePercent}%` }}
-              ></div>
-            </div>
-          </div>
           <button
             type="button"
             aria-label={saved ? "Remover dos salvos" : "Salvar"}
@@ -185,7 +176,7 @@ const ResultCard = ({
         </div>
       )}
 
-      {/* Footer: metadata */}
+      {/* Footer: metadata + relevance + CTA */}
       <div className="flex flex-wrap items-center gap-y-2 gap-x-3 md:gap-4 text-xs md:text-sm font-medium text-gray-500 dark:text-gray-400 pt-3 border-t border-gray-100 dark:border-gray-700">
         {!isPerson && pagina != null && (
           <div className="flex items-center gap-1.5">
@@ -194,19 +185,24 @@ const ResultCard = ({
           </div>
         )}
         {!isPerson && pagina != null && <div className="hidden md:block w-px h-4 bg-gray-200 dark:bg-gray-700"></div>}
-        {tags && tags.length > 0 && (
-          <div className="flex items-center gap-1.5 flex-wrap">
-            <Tag size={16} aria-hidden="true" />
-            {tags.slice(0, 3).map((tag) => (
-              <span
-                key={tag}
-                className="px-2 py-0.5 bg-unifal-bg dark:bg-gray-700 text-primary dark:text-secondary rounded-full text-xs font-bold"
-              >
-                {tag}
-              </span>
-            ))}
+
+        {/* Relevance indicator (fills available space) */}
+        <div className="flex items-center gap-2 flex-1 min-w-[140px] max-w-[220px]">
+          <span className="text-xs font-medium text-gray-500 dark:text-gray-400 shrink-0">Relevância</span>
+          <div className="flex-1 h-1.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-primary dark:bg-secondary rounded-full transition-all duration-500"
+              style={{ width: `${relevancePercent}%` }}
+              role="progressbar"
+              aria-valuenow={relevancePercent}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-label={`Relevância da pesquisa: ${relevancePercent}%`}
+            ></div>
           </div>
-        )}
+          <span className="text-xs font-bold text-primary dark:text-secondary shrink-0 tabular-nums">{relevancePercent}%</span>
+        </div>
+
         <div className="ml-auto flex items-center gap-1 text-primary dark:text-secondary font-bold opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
           {isPerson ? "Ver Lattes" : "Ver documento"}
           <ExternalLink size={16} aria-hidden="true" />
