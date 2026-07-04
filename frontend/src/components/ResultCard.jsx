@@ -112,7 +112,7 @@ const ResultCard = ({
             <span className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Ementa</span>
           )}
           <p 
-            className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed line-clamp-3 mt-0.5"
+            className={`text-gray-600 dark:text-gray-300 text-sm leading-relaxed ${isDiscipline ? "" : "line-clamp-3"} mt-0.5`}
             dangerouslySetInnerHTML={{ __html: bodyText }}
           />
         </div>
