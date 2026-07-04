@@ -78,6 +78,7 @@ test('HomePage requests new page when pagination is used', async () => {
     });
 
   vi.stubGlobal('fetch', fetchMock);
+  vi.stubGlobal('scrollTo', vi.fn());
 
   renderHome();
 
@@ -116,6 +117,7 @@ test('HomePage resets to page 1 when sort or category changes', async () => {
     .mockResolvedValueOnce({ ok: true, json: async () => mockResponse() });
 
   vi.stubGlobal('fetch', fetchMock);
+  vi.stubGlobal('scrollTo', vi.fn());
 
   renderHome();
 
@@ -230,7 +232,9 @@ test('HomePage scrolls and focuses search input when clicking "Ir para o buscado
 
   expect(scrollToMock).toHaveBeenCalledWith({ top: 0, behavior: 'smooth' });
   const input = screen.getByPlaceholderText(/Busque por/i);
-  expect(document.activeElement).toBe(input);
+  await waitFor(() => {
+    expect(document.activeElement).toBe(input);
+  });
 });
 
 test('HomePage renders "Você quis dizer" banner and handles suggestion click', async () => {
