@@ -11,6 +11,7 @@ class Result(BaseModel):
     tipo_conteudo: str = ""
     titulo_documento: str = ""
     curso: str = ""
+    unidade: str = ""
     pagina: int = 1
     url_documento: str = ""
     tags: list[str] = []

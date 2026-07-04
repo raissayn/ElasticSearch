@@ -15,6 +15,7 @@ const ResultCard = ({
   nome_disciplina,
   periodo,
   curso,
+  unidade,
   ementa,
   conteudo,
   titulo_documento,
@@ -49,15 +50,17 @@ const ResultCard = ({
   if (isSection && titulo_secao && !titulo_secao.toLowerCase().startsWith("página")) displayTitle = titulo_secao;
   if (isPerson && nome_pessoa) displayTitle = nome_pessoa;
 
-  // Header display context (Course or Document)
-  const headerContext = curso || (displayTitle !== titulo_documento ? titulo_documento : "Documento");
+  // Header display context (Course, Unidade, or Document)
+  const headerContext = isPerson
+    ? (unidade || "UNIFAL-MG")
+    : (curso || (displayTitle !== titulo_documento ? titulo_documento : "Documento"));
 
   const Icon = iconByType[tipo_conteudo] || FileText;
 
   // Determine main body text (prioritize highlight for better snippets)
   let bodyText = highlight || ementa || conteudo;
   if (!highlight && isPerson) {
-      bodyText = [cargo, titulacao, area_atuacao].filter(Boolean).join(" • ");
+      bodyText = conteudo || [cargo, titulacao, area_atuacao].filter(Boolean).join(" • ");
   }
   
   const relevancePercent = max_score > 0 ? Math.round((score / max_score) * 100) : 0;
@@ -95,7 +98,10 @@ const ResultCard = ({
             <span className="font-bold text-gray-900 dark:text-on-surface line-clamp-1 leading-tight block">
               {headerContext}
             </span>
-            {periodo && (
+            {isPerson && titulacao && (
+              <span className="text-xs text-gray-500 dark:text-gray-400 font-medium">{titulacao}</span>
+            )}
+            {!isPerson && periodo && (
               <span className="text-xs text-gray-500 dark:text-gray-400 font-medium">{periodo}º Período</span>
             )}
           </div>
@@ -181,13 +187,13 @@ const ResultCard = ({
 
       {/* Footer: metadata */}
       <div className="flex flex-wrap items-center gap-y-2 gap-x-3 md:gap-4 text-xs md:text-sm font-medium text-gray-500 dark:text-gray-400 pt-3 border-t border-gray-100 dark:border-gray-700">
-        {pagina != null && (
+        {!isPerson && pagina != null && (
           <div className="flex items-center gap-1.5">
             <Newspaper size={16} aria-hidden="true" />
             Página {pagina}
           </div>
         )}
-        {pagina != null && <div className="hidden md:block w-px h-4 bg-gray-200 dark:bg-gray-700"></div>}
+        {!isPerson && pagina != null && <div className="hidden md:block w-px h-4 bg-gray-200 dark:bg-gray-700"></div>}
         {tags && tags.length > 0 && (
           <div className="flex items-center gap-1.5 flex-wrap">
             <Tag size={16} aria-hidden="true" />
@@ -202,7 +208,7 @@ const ResultCard = ({
           </div>
         )}
         <div className="ml-auto flex items-center gap-1 text-primary dark:text-secondary font-bold opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
-          Ver documento
+          {isPerson ? "Ver Lattes" : "Ver documento"}
           <ExternalLink size={16} aria-hidden="true" />
         </div>
       </div>
