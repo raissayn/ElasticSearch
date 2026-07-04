@@ -180,7 +180,7 @@ const ResultCard = ({
           </div>
         )}
         <div className="ml-auto flex items-center gap-1 text-primary dark:text-secondary font-bold opacity-0 group-hover:opacity-100 transition-opacity">
-          Ver documento
+          {isPerson ? "Ver Lattes" : "Ver documento"}
           <span className="material-symbols-outlined text-[16px]">open_in_new</span>
         </div>
       </div>
