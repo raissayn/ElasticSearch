@@ -1,4 +1,6 @@
 import { FileText, GraduationCap, User, Newspaper, Bookmark, Clock, Tag, ExternalLink } from 'lucide-react';
+import { useSavedItems } from '../contexts/SavedItemsContext';
+import { getSavedKey } from '../utils/savedItems';
 
 const iconByType = {
   disciplina: GraduationCap,
@@ -7,6 +9,8 @@ const iconByType = {
 };
 
 const ResultCard = ({
+  document_id,
+  source_id,
   tipo_conteudo,
   nome_disciplina,
   periodo,
@@ -31,6 +35,10 @@ const ResultCard = ({
   max_score,
   highlight,
 }) => {
+  const { isSaved, toggleSave } = useSavedItems();
+  const itemKey = getSavedKey({ document_id, source_id, url_documento, pagina });
+  const saved = isSaved(itemKey);
+
   const isDiscipline = tipo_conteudo === "disciplina";
   const isSection = tipo_conteudo === "secao_texto";
   const isPerson = tipo_conteudo === "pessoa";
@@ -58,6 +66,18 @@ const ResultCard = ({
     if (url_documento) {
       window.open(url_documento, "_blank", "noopener,noreferrer");
     }
+  };
+
+  const handleSaveClick = (e) => {
+    e.stopPropagation();
+    toggleSave({
+      document_id, source_id, tipo_conteudo, tipo_documento: titulo_documento,
+      nome_disciplina, periodo, curso, ementa, conteudo, titulo_documento,
+      titulo_secao, nome_pessoa, cargo, titulacao, area_atuacao,
+      carga_horaria_total, carga_horaria_teorica, carga_horaria_pratica,
+      carga_horaria_atividade, pre_requisitos, tags, pagina, url_documento,
+      score, max_score, highlight,
+    });
   };
 
   return (
@@ -94,11 +114,16 @@ const ResultCard = ({
           </div>
           <button
             type="button"
-            aria-label="Salvar"
-            className="text-gray-400 hover:text-primary dark:hover:text-secondary transition-colors"
-            onClick={(e) => e.stopPropagation()}
+            aria-label={saved ? "Remover dos salvos" : "Salvar"}
+            className={`transition-colors ${saved ? "text-primary dark:text-secondary" : "text-gray-400 hover:text-primary dark:hover:text-secondary"}`}
+            onClick={handleSaveClick}
           >
-            <Bookmark size={20} strokeWidth={1} aria-hidden="true" />
+            <Bookmark
+              size={20}
+              strokeWidth={1}
+              fill={saved ? "currentColor" : "none"}
+              aria-hidden="true"
+            />
           </button>
         </div>
       </div>

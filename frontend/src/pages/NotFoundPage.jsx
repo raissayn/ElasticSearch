@@ -1,16 +1,36 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Compass } from 'lucide-react';
+import { Compass, Bookmark } from 'lucide-react';
 import ThemeToggle from '../components/ThemeToggle';
+import SavedPanel from '../components/SavedPanel';
+import { useSavedItems } from '../contexts/SavedItemsContext';
 
 const NotFoundPage = () => {
   const navigate = useNavigate();
+  const { savedItems } = useSavedItems();
+  const [isSavedPanelOpen, setIsSavedPanelOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-[#fafafa] dark:bg-surface font-sans text-gray-900 dark:text-on-surface transition-colors duration-300">
       {/* Navbar */}
       <nav className="flex justify-between items-center px-4 md:px-8 py-4 md:py-6 max-w-7xl mx-auto">
         <div className="text-2xl font-bold tracking-tight text-primary dark:text-secondary">UniSearch.</div>
-        <ThemeToggle />
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          <button
+            type="button"
+            onClick={() => setIsSavedPanelOpen(true)}
+            aria-label="Ver itens salvos"
+            className="relative p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-200 flex items-center justify-center text-primary dark:text-secondary focus:outline-none active:scale-90 hover:scale-110"
+          >
+            <Bookmark size={24} aria-hidden="true" />
+            {savedItems.length > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 flex items-center justify-center rounded-full bg-primary dark:bg-secondary text-white dark:text-surface text-[10px] font-bold leading-none ring-2 ring-white dark:ring-surface">
+                {savedItems.length}
+              </span>
+            )}
+          </button>
+        </div>
       </nav>
 
       {/* Hero 404 */}
@@ -48,6 +68,8 @@ const NotFoundPage = () => {
           </div>
         </div>
       </main>
+
+      {isSavedPanelOpen && <SavedPanel onClose={() => setIsSavedPanelOpen(false)} />}
     </div>
   );
 };

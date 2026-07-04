@@ -1,9 +1,11 @@
 import { useContext, useState, useRef, useEffect } from 'react';
 import { SearchContext } from '../contexts/SearchContext';
+import { useSavedItems } from '../contexts/SavedItemsContext';
 import ResultCard from '../components/ResultCard';
 import SkeletonCard from '../components/SkeletonCard';
 import Pagination from '../components/Pagination';
 import ThemeToggle from '../components/ThemeToggle';
+import SavedPanel from '../components/SavedPanel';
 import logoUnifal from '../assets/logoUnifal.png';
 import {
   Search,
@@ -17,13 +19,16 @@ import {
   Sparkles,
   Telescope,
   SearchX,
+  Bookmark,
 } from 'lucide-react';
 
 const PAGE_SIZE = 10;
 
 const HomePage = () => {
   const { query, setQuery } = useContext(SearchContext);
+  const { savedItems } = useSavedItems();
   const [hasSearched, setHasSearched] = useState(false);
+  const [isSavedPanelOpen, setIsSavedPanelOpen] = useState(false);
   const [results, setResults] = useState([]);
   const [total, setTotal] = useState(0);
   const [maxScore, setMaxScore] = useState(0);
@@ -171,9 +176,32 @@ const HomePage = () => {
       {/* Navbar */}
       <nav className="flex justify-between items-center px-4 md:px-8 py-4 md:py-6 max-w-7xl mx-auto">
         <div className="text-2xl font-bold tracking-tight text-primary dark:text-secondary">UniSearch.</div>
-        <div className="flex items-center gap-4">
-          <ThemeToggle />
-          <img src={logoUnifal} alt="Logo UNIFAL" className="h-8 md:h-10 w-auto object-contain hover:scale-105 transition-transform duration-200 dark:brightness-110" />
+        <div className="flex items-center gap-6">
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <button
+              type="button"
+              onClick={() => setIsSavedPanelOpen(true)}
+              aria-label="Ver itens salvos"
+              className="relative p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-200 flex items-center justify-center text-primary dark:text-secondary focus:outline-none active:scale-90 hover:scale-110"
+            >
+              <Bookmark size={24} aria-hidden="true" />
+              {savedItems.length > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 flex items-center justify-center rounded-full bg-primary dark:bg-secondary text-white dark:text-surface text-[10px] font-bold leading-none ring-2 ring-white dark:ring-surface">
+                  {savedItems.length}
+                </span>
+              )}
+            </button>
+          </div>
+          <a
+            href="https://www.unifal-mg.edu.br/portal/index/"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Site oficial da UNIFAL-MG"
+            className="p-1.5 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-200 flex items-center justify-center active:scale-90 hover:scale-105"
+          >
+            <img src={logoUnifal} alt="Logo UNIFAL" className="h-8 md:h-10 w-auto object-contain dark:brightness-110" />
+          </a>
         </div>
       </nav>
 
@@ -521,6 +549,8 @@ const HomePage = () => {
           </div>
         )}
       </main>
+
+      {isSavedPanelOpen && <SavedPanel onClose={() => setIsSavedPanelOpen(false)} />}
     </div>
   );
 };
