@@ -61,15 +61,35 @@ Antes de começar, certifique-se de ter instalado:
 
 ### 2️⃣ Ingestão de Documentos (Indexando no Elasticsearch)
 
-Para que a busca semântica funcione, os documentos PDF localizados na pasta [backend/app/data/pdfs](file:///C:/Users/vinic/code/codeW/UniSearch/ElasticSearch/backend/app/data/pdfs) precisam ser processados e indexados no Elasticsearch. Você pode fazer isso de duas formas:
+Para que a busca semântica funcione, os documentos PDF localizados na pasta [backend/app/data/pdfs](file:///C:/Users/vinic/code/codeW/UniSearch/ElasticSearch/backend/app/data/pdfs) precisam ser processados e indexados no Elasticsearch. O processo usa um **manifest** (`backend/data/documents_manifest.example.json`) que mapeia cada PDF ao seu `source_id`, título e URL pública oficial (ex.: do portal da UNIFAL), garantindo que os links "Ver documento" apontem para o local correto.
+
+> [!IMPORTANT]
+> Sempre crie o índice **antes** da primeira ingestão. Isso aplica o mapping correto (ex.: `source_id` como `keyword`) e impede que o Elasticsearch crie o índice automaticamente com dynamic mapping, o que quebraria ordenação, agregações e collapse.
 
 #### Opção A: Pelo Docker (Mais fácil)
-Com os contêineres rodando, execute o comando abaixo na **raiz** do projeto:
-```bash
-docker compose exec api python scripts/ingest_pdfs.py --dir app/data/pdfs
-```
+Com os contêineres rodando, execute na **raiz** do projeto:
+
+1. Crie o índice (apenas na primeira vez, ou após `--recreate`):
+   ```bash
+   docker compose exec api python scripts/create_unisearch_index.py
+   ```
+2. Ingeste os documentos usando o manifest:
+   ```bash
+   docker compose exec api python scripts/ingest_pdfs.py --manifest data/documents_manifest.example.json
+   ```
+
 > [!NOTE]
 > Se você adicionar ou atualizar arquivos PDF no seu computador local, precisará reconstruir a imagem do container (`docker compose build api`) antes de executar o script acima para atualizar o conteúdo interno.
+
+<details>
+<summary>Recriar o índice do zero (opcional)</summary>
+
+Se o índice foi criado com mapping errado ou você quer limpar documentos antigos, recrie e reingeste:
+```bash
+docker compose exec api python scripts/create_unisearch_index.py --recreate
+docker compose exec api python scripts/ingest_pdfs.py --manifest data/documents_manifest.example.json
+```
+</details>
 
 #### Opção B: Localmente (Recomendado para desenvolvimento ativo)
 1. Acesse a pasta do backend:
@@ -89,9 +109,13 @@ docker compose exec api python scripts/ingest_pdfs.py --dir app/data/pdfs
    ```bash
    pip install -r requirements.txt
    ```
-4. Execute o script de indexação automática:
+4. Crie o índice (apenas na primeira vez, ou após `--recreate`):
    ```bash
-   python scripts/ingest_pdfs.py --dir app/data/pdfs
+   python scripts/create_unisearch_index.py
+   ```
+5. Ingeste os documentos usando o manifest:
+   ```bash
+   python scripts/ingest_pdfs.py --manifest data/documents_manifest.example.json
    ```
 
 ---
