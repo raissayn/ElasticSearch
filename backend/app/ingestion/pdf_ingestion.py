@@ -38,9 +38,12 @@ def load_manifest(manifest_path: Path) -> list[dict[str, Any]]:
     with manifest_path.open("r", encoding="utf-8") as file:
         payload = json.load(file)
 
-    documents = payload.get("documents", [])
+    documents: list[dict[str, Any]] = []
+    for section in ("documents", "dynamics", "faculty"):
+        documents.extend(payload.get(section, []) or [])
+
     if not isinstance(documents, list) or not documents:
-        raise ValueError("Manifest must contain a non-empty 'documents' list.")
+        raise ValueError("Manifest must contain at least one non-empty section among 'documents', 'dynamics', 'faculty'.")
 
     required = {"source_id", "title", "local_path", "public_url"}
     normalized: list[dict[str, Any]] = []
