@@ -32,14 +32,28 @@ PERIOD_NAMES = {
     "quinto": 5, "sexto": 6, "sétimo": 7, "setimo": 7, "oitavo": 8,
 }
 
+# Non-whitespace sentinel so it survives normalize_text() and lets us track which
+# page a discipline starts/spans after merging all pages of a source.
+PAGE_SEPARATOR = "\x1E"
+
+# Recurring footer line in PPC pages. Stripped only from disciplina bodies so the
+# SEI number stays searchable in regulamento (secao_texto) documents.
+BOILERPLATE_PATTERN = re.compile(
+    r"\s*Projeto Pedag[óo]gico[^/]*?SEI\s*[\d./-]+\s*/\s*pg\.?\s*\d+\s*",
+    flags=re.IGNORECASE,
+)
+
 
 def load_manifest(manifest_path: Path) -> list[dict[str, Any]]:
     with manifest_path.open("r", encoding="utf-8") as file:
         payload = json.load(file)
 
-    documents = payload.get("documents", [])
+    documents: list[dict[str, Any]] = []
+    for section in ("documents", "dynamics", "faculty"):
+        documents.extend(payload.get(section, []) or [])
+
     if not isinstance(documents, list) or not documents:
-        raise ValueError("Manifest must contain a non-empty 'documents' list.")
+        raise ValueError("Manifest must contain at least one non-empty section among 'documents', 'dynamics', 'faculty'.")
 
     required = {"source_id", "title", "local_path", "public_url"}
     normalized: list[dict[str, Any]] = []
@@ -87,68 +101,116 @@ def parse_period_number(period_text: str) -> int | None:
     return PERIOD_NAMES.get(period_text.lower().strip())
 
 
+def strip_boilerplate(text: str) -> str:
+    return BOILERPLATE_PATTERN.sub(" ", text)
+
+
+def merge_pages(pages: list[tuple[int, str]]) -> tuple[str, list[int]]:
+    merged = PAGE_SEPARATOR.join(text for _, text in pages)
+    return merged, [page_number for page_number, _ in pages]
+
+
+def page_at_offset(merged: str, page_numbers: list[int], offset: int) -> int:
+    if not page_numbers:
+        return 0
+    index = merged.count(PAGE_SEPARATOR, 0, offset)
+    return page_numbers[min(index, len(page_numbers) - 1)]
+
+
+def trim_last_discipline_body(body: str) -> str:
+    # Bound the last discipline to the page that contains its Ementa so trailing
+    # regulamento sections are not absorbed into the disciplina document.
+    ementa_pos = body.lower().find("ementa:")
+    if ementa_pos == -1:
+        return body
+    sep_after = body.find(PAGE_SEPARATOR, ementa_pos)
+    if sep_after == -1:
+        return body
+    return body[:sep_after]
+
+
 def build_documents_for_source(source: dict[str, Any], pages: list[tuple[int, str]]) -> list[dict[str, Any]]:
-    local_path = Path(source["local_path"])
-    source_tags = source.get("tags") or []
     source_id = str(source["source_id"])
     public_url = str(source["public_url"])
     now_iso = datetime.now(timezone.utc).isoformat()
 
+    common = {
+        "source_id": source_id,
+        "tipo_documento": source.get("tipo_documento", "ppc"),
+        "titulo_documento": source["title"],
+        "curso": source.get("curso", ""),
+        "instituicao": source.get("instituicao", "UNIFAL-MG"),
+        "ano_vigencia": source.get("ano_vigencia"),
+        "tags": list(set(source.get("tags") or [])),
+        "indexado_em": now_iso,
+    }
+    page_text_by_number = {number: text for number, text in pages}
+
     documents: list[dict[str, Any]] = []
-    for page_number, page_text in pages:
-        period_match = PERIOD_PATTERN.search(page_text)
+
+    # Pass A: disciplines are parsed over the merged page stream so a table that
+    # is split across a page break is captured whole, with its ementa complete.
+    merged, page_numbers = merge_pages(pages)
+    chunks = list(DISCIPLINE_PATTERN.finditer(merged))
+    discipline_pages: set[int] = set()
+
+    for chunk_index, chunk in enumerate(chunks):
+        body = chunk.group("body")
+        body_end_offset = chunk.end()
+        if chunk_index == len(chunks) - 1:
+            trimmed = trim_last_discipline_body(body)
+            body_end_offset = chunk.start("body") + len(trimmed)
+            body = trimmed
+
+        start_page = page_at_offset(merged, page_numbers, chunk.start())
+        end_page = page_at_offset(merged, page_numbers, body_end_offset)
+        discipline_pages.update(
+            number for number in page_numbers if start_page <= number <= end_page
+        )
+
+        body = normalize_text(strip_boilerplate(body).replace(PAGE_SEPARATOR, " "))
+        period_match = PERIOD_PATTERN.search(page_text_by_number.get(start_page, ""))
         period = period_match.group(1).title() if period_match else source.get("period", "")
-        discipline_chunks = list(DISCIPLINE_PATTERN.finditer(page_text))
+        workloads = extract_workload(body)
 
-        # Base document with common metadata
-        base_doc = {
-            "source_id": source_id,
-            "tipo_documento": source.get("tipo_documento", "ppc"),
-            "titulo_documento": source["title"],
-            "curso": source.get("curso", ""),
-            "instituicao": source.get("instituicao", "UNIFAL-MG"),
-            "ano_vigencia": source.get("ano_vigencia"),
-            "url_documento": build_page_url(public_url, page_number),
-            "pagina": page_number,
-            "tags": list(set(source_tags)),
-            "indexado_em": now_iso,
-        }
+        documents.append(
+            {
+                **common,
+                "document_id": f"{source_id}-d{chunk_index + 1}",
+                "tipo_conteudo": "disciplina",
+                "nome_disciplina": normalize_text(
+                    chunk.group("discipline").replace(PAGE_SEPARATOR, " ")
+                ),
+                "periodo": parse_period_number(period),
+                "tipo_disciplina": "Obrigatória",
+                "pre_requisitos": extract_prerequisites(body),
+                "ementa": extract_summary(body),
+                "conteudo": body,
+                "carga_horaria_total": workloads["total"],
+                "carga_horaria_teorica": workloads["theoretical"],
+                "carga_horaria_pratica": workloads["practical"],
+                "pagina": start_page,
+                "url_documento": build_page_url(public_url, start_page),
+            }
+        )
 
-        if discipline_chunks:
-            for chunk_index, chunk in enumerate(discipline_chunks, start=1):
-                discipline_name = normalize_text(chunk.group("discipline"))
-                body = normalize_text(chunk.group("body"))
-                prerequisites = extract_prerequisites(body)
-                summary = extract_summary(body)
-                workloads = extract_workload(body)
-                document_id = f"{source_id}-p{page_number}-d{chunk_index}"
-                documents.append(
-                    {
-                        **base_doc,
-                        "document_id": document_id,
-                        "tipo_conteudo": "disciplina",
-                        "nome_disciplina": discipline_name,
-                        "periodo": parse_period_number(period),
-                        "tipo_disciplina": "Obrigatória",
-                        "pre_requisitos": prerequisites,
-                        "ementa": summary,
-                        "conteudo": body,
-                        "carga_horaria_total": workloads["total"],
-                        "carga_horaria_teorica": workloads["theoretical"],
-                        "carga_horaria_pratica": workloads["practical"],
-                    }
-                )
-        else:
-            document_id = f"{source_id}-p{page_number}"
-            documents.append(
-                {
-                    **base_doc,
-                    "document_id": document_id,
-                    "tipo_conteudo": "secao_texto",
-                    "titulo_secao": "",
-                    "conteudo": page_text,
-                }
-            )
+    # Pass B: regulamento pages keep per-page secao_texto with the SEI/footer
+    # intact so the SEI number stays searchable. Pages absorbed by a discipline
+    # (including cut-table continuations) are skipped to avoid leaking footers.
+    for page_number, page_text in pages:
+        if page_number in discipline_pages:
+            continue
+        documents.append(
+            {
+                **common,
+                "document_id": f"{source_id}-p{page_number}",
+                "tipo_conteudo": "secao_texto",
+                "titulo_secao": "",
+                "conteudo": page_text,
+                "pagina": page_number,
+                "url_documento": build_page_url(public_url, page_number),
+            }
+        )
 
     return documents
 

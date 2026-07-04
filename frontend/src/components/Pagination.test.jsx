@@ -20,7 +20,7 @@ test('Pagination calls onPageChange for numbers and arrows', async () => {
 
   await user.click(screen.getByRole('button', { name: '3' }));
   await user.click(screen.getByRole('button', { name: 'Anterior' }));
-  await user.click(screen.getByRole('button', { name: 'Proxima' }));
+  await user.click(screen.getByRole('button', { name: 'Próxima' }));
 
   expect(onPageChange).toHaveBeenNthCalledWith(1, 3);
   expect(onPageChange).toHaveBeenNthCalledWith(2, 1);

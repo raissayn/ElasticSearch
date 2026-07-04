@@ -28,8 +28,8 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Create unisearch_documentos index.")
     parser.add_argument(
         "--mapping",
-        default="backend/elastic/unisearch_documentos_mapping.json",
-        help="Path to mapping JSON file.",
+        default=None,
+        help="Path to mapping JSON file. Defaults to <backend>/elastic/unisearch_documentos_mapping.json.",
     )
     parser.add_argument(
         "--recreate",
@@ -38,7 +38,10 @@ def main() -> int:
     )
     args = parser.parse_args()
 
-    mapping_path = Path(args.mapping)
+    if args.mapping:
+        mapping_path = Path(args.mapping)
+    else:
+        mapping_path = ROOT_DIR / "elastic" / "unisearch_documentos_mapping.json"
     mapping = json.loads(mapping_path.read_text(encoding="utf-8"))
     client = create_client()
 
