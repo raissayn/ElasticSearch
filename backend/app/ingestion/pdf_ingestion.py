@@ -11,6 +11,7 @@ from elasticsearch.helpers import bulk
 from pypdf import PdfReader
 
 from app.core.config import settings
+from app.ingestion.professor_parser import parse_professor_text
 
 try:
     import pdfplumber
@@ -87,8 +88,39 @@ def parse_period_number(period_text: str) -> int | None:
     return PERIOD_NAMES.get(period_text.lower().strip())
 
 
+def build_professor_document(source: dict[str, Any], pages: list[tuple[int, str]]) -> list[dict[str, Any]]:
+    source_id = str(source["source_id"])
+    public_url = str(source["public_url"])
+    now_iso = datetime.now(timezone.utc).isoformat()
+
+    merged = " ".join(text for _, text in pages)
+    parsed = parse_professor_text(merged)
+
+    document = {
+        "source_id": source_id,
+        "tipo_documento": "professor",
+        "tipo_conteudo": "pessoa",
+        "titulo_documento": source["title"],
+        "nome_pessoa": parsed["nome_pessoa"] or source["title"],
+        "unidade": parsed["unidade"],
+        "titulacao": parsed["titulacao"],
+        "conteudo": parsed["conteudo"],
+        "curso": source.get("curso", ""),
+        "instituicao": source.get("instituicao", "UNIFAL-MG"),
+        "tags": list(set(source.get("tags") or [])),
+        "pagina": pages[0][0] if pages else 1,
+        "url_documento": public_url,
+        "indexado_em": now_iso,
+        "document_id": f"{source_id}-p{pages[0][0] if pages else 1}",
+    }
+    return [document]
+
+
 def build_documents_for_source(source: dict[str, Any], pages: list[tuple[int, str]]) -> list[dict[str, Any]]:
-    local_path = Path(source["local_path"])
+    if source.get("tipo_documento") == "professor":
+        return build_professor_document(source, pages)
+
+    local_path = Path(source.get("local_path", ""))
     source_tags = source.get("tags") or []
     source_id = str(source["source_id"])
     public_url = str(source["public_url"])
