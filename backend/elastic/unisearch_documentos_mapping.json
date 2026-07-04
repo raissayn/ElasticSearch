@@ -73,6 +73,9 @@
       "instituicao": {
         "type": "keyword"
       },
+      "unidade": {
+        "type": "keyword"
+      },
       "ano_vigencia": {
         "type": "integer"
       },
