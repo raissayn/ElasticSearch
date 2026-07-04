@@ -82,7 +82,6 @@ Antes de começar, certifique-se de ter instalado:
 
 *   `/backend`: API FastAPI, lógica de ingestão de PDFs e configuração do cliente Elasticsearch.
 *   `/frontend`: Interface do usuário construída com React, Vite e TailwindCSS.
-*   `/baseDeDados`: Repositório de documentos originais (PDFs pedagógicos, regimentos, TCC, etc.).
 
 ---
 
