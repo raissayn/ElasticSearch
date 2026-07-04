@@ -5,6 +5,8 @@ from pydantic import BaseModel
 
 class Result(BaseModel):
     # Common metadata
+    document_id: str = ""
+    source_id: str = ""
     tipo_documento: str = ""
     tipo_conteudo: str = ""
     titulo_documento: str = ""
