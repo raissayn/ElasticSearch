@@ -214,18 +214,174 @@
       ]
     },
     {
-      "source_id": "prof-angela-moreno",
+      "source_id": "prof-angela-leite-moreno",
       "title": "Ângela Leite Moreno",
       "tipo_documento": "professor",
       "curso": "Ciência da Computação",
       "ano_vigencia": 2026,
-      "local_path": "app/data/pdfs/professores/angela_moreno.pdf",
-      "public_url": "http://lattes.cnpq.br/1234567890",
-      "tags": [
-        "ciencia-da-computacao",
-        "professor",
-        "matematica"
-      ]
+      "local_path": "app/data/pdfs/professores/Ângela Leite Moreno.pdf",
+      "public_url": "http://lattes.cnpq.br/5106302431642025",
+      "tags": ["ciencia-da-computacao", "professor"]
+    },
+    {
+      "source_id": "prof-tiago-jose-arruda",
+      "title": "Tiago José Arruda",
+      "tipo_documento": "professor",
+      "curso": "Ciência da Computação",
+      "ano_vigencia": 2026,
+      "local_path": "app/data/pdfs/professores/Tiago José Arruda.pdf",
+      "public_url": "http://lattes.cnpq.br/2604391010090933",
+      "tags": ["ciencia-da-computacao", "professor"]
+    },
+    {
+      "source_id": "prof-rodrigo-martins-pagliares",
+      "title": "Rodrigo Martins Pagliares",
+      "tipo_documento": "professor",
+      "curso": "Ciência da Computação",
+      "ano_vigencia": 2026,
+      "local_path": "app/data/pdfs/professores/Rodrigo Martins Pagliares.pdf",
+      "public_url": "http://lattes.cnpq.br/1194178136211401",
+      "tags": ["ciencia-da-computacao", "professor"]
+    },
+    {
+      "source_id": "prof-paulo-alexandre-bressan",
+      "title": "Paulo Alexandre Bressan",
+      "tipo_documento": "professor",
+      "curso": "Ciência da Computação",
+      "ano_vigencia": 2026,
+      "local_path": "app/data/pdfs/professores/Paulo Alexandre Bressan.pdf",
+      "public_url": "http://lattes.cnpq.br/0231239253253477",
+      "tags": ["ciencia-da-computacao", "professor"]
+    },
+    {
+      "source_id": "prof-nelson-jose-freitas-da-silveira",
+      "title": "Nelson José Freitas da Silveira",
+      "tipo_documento": "professor",
+      "curso": "Ciência da Computação",
+      "ano_vigencia": 2026,
+      "local_path": "app/data/pdfs/professores/Nelson José Freitas da Silveira.pdf",
+      "public_url": "http://lattes.cnpq.br/6853382226977684",
+      "tags": ["ciencia-da-computacao", "professor"]
+    },
+    {
+      "source_id": "prof-mariane-moreira-de-souza",
+      "title": "Mariane Moreira de Souza",
+      "tipo_documento": "professor",
+      "curso": "Ciência da Computação",
+      "ano_vigencia": 2026,
+      "local_path": "app/data/pdfs/professores/Mariane Moreira de Souza.pdf",
+      "public_url": "http://lattes.cnpq.br/9682825029495702",
+      "tags": ["ciencia-da-computacao", "professor"]
+    },
+    {
+      "source_id": "prof-marcelo-lacerda-rezende",
+      "title": "Marcelo Lacerda Rezende",
+      "tipo_documento": "professor",
+      "curso": "Ciência da Computação",
+      "ano_vigencia": 2026,
+      "local_path": "app/data/pdfs/professores/Marcelo Lacerda Rezende.pdf",
+      "public_url": "http://lattes.cnpq.br/6453091384982419",
+      "tags": ["ciencia-da-computacao", "professor"]
+    },
+    {
+      "source_id": "prof-luiz-eduardo-da-silva",
+      "title": "Luiz Eduardo da Silva",
+      "tipo_documento": "professor",
+      "curso": "Ciência da Computação",
+      "ano_vigencia": 2026,
+      "local_path": "app/data/pdfs/professores/Luiz Eduardo da Silva.pdf",
+      "public_url": "http://lattes.cnpq.br/5459510407019521",
+      "tags": ["ciencia-da-computacao", "professor"]
+    },
+    {
+      "source_id": "prof-luiz-alberto-beijo",
+      "title": "Luiz Alberto Beijo",
+      "tipo_documento": "professor",
+      "curso": "Ciência da Computação",
+      "ano_vigencia": 2026,
+      "local_path": "app/data/pdfs/professores/Luiz Alberto Beijo.pdf",
+      "public_url": "http://lattes.cnpq.br/8194104388434526",
+      "tags": ["ciencia-da-computacao", "professor"]
+    },
+    {
+      "source_id": "prof-jose-francisco-lopes-xarao",
+      "title": "José Francisco Lopes Xarão",
+      "tipo_documento": "professor",
+      "curso": "Ciência da Computação",
+      "ano_vigencia": 2026,
+      "local_path": "app/data/pdfs/professores/José Francisco Lopes Xarão.pdf",
+      "public_url": "http://lattes.cnpq.br/9981399494217087",
+      "tags": ["ciencia-da-computacao", "professor"]
+    },
+    {
+      "source_id": "prof-jose-claudinei-ferreira",
+      "title": "José Claudinei Ferreira",
+      "tipo_documento": "professor",
+      "curso": "Ciência da Computação",
+      "ano_vigencia": 2026,
+      "local_path": "app/data/pdfs/professores/José Claudinei Ferreira.pdf",
+      "public_url": "http://lattes.cnpq.br/6808752952332925",
+      "tags": ["ciencia-da-computacao", "professor"]
+    },
+    {
+      "source_id": "prof-iago-augusto-de-carvalho",
+      "title": "Iago Augusto de Carvalho",
+      "tipo_documento": "professor",
+      "curso": "Ciência da Computação",
+      "ano_vigencia": 2026,
+      "local_path": "app/data/pdfs/professores/Iago Augusto de Carvalho.pdf",
+      "public_url": "http://lattes.cnpq.br/9975041225831602",
+      "tags": ["ciencia-da-computacao", "professor"]
+    },
+    {
+      "source_id": "prof-flavio-barbieri-gonzaga",
+      "title": "Flávio Barbieri Gonzaga",
+      "tipo_documento": "professor",
+      "curso": "Ciência da Computação",
+      "ano_vigencia": 2026,
+      "local_path": "app/data/pdfs/professores/Flávio Barbieri Gonzaga.pdf",
+      "public_url": "http://lattes.cnpq.br/1310310705488241",
+      "tags": ["ciencia-da-computacao", "professor"]
+    },
+    {
+      "source_id": "prof-evandro-monteiro",
+      "title": "Evandro Monteiro",
+      "tipo_documento": "professor",
+      "curso": "Ciência da Computação",
+      "ano_vigencia": 2026,
+      "local_path": "app/data/pdfs/professores/Evandro Monteiro.pdf",
+      "public_url": "http://lattes.cnpq.br/3089568911577519",
+      "tags": ["ciencia-da-computacao", "professor"]
+    },
+    {
+      "source_id": "prof-eliseu-cesar-miguel",
+      "title": "Eliseu César Miguel",
+      "tipo_documento": "professor",
+      "curso": "Ciência da Computação",
+      "ano_vigencia": 2026,
+      "local_path": "app/data/pdfs/professores/Eliseu César Miguel.pdf",
+      "public_url": "http://lattes.cnpq.br/6883421018811339",
+      "tags": ["ciencia-da-computacao", "professor"]
+    },
+    {
+      "source_id": "prof-anderson-jose-de-oliveira",
+      "title": "Anderson Jose de Oliveira",
+      "tipo_documento": "professor",
+      "curso": "Ciência da Computação",
+      "ano_vigencia": 2026,
+      "local_path": "app/data/pdfs/professores/Anderson Jose de Oliveira.pdf",
+      "public_url": "http://lattes.cnpq.br/1349156075777095",
+      "tags": ["ciencia-da-computacao", "professor"]
+    },
+    {
+      "source_id": "prof-alisson-eugenio",
+      "title": "Alisson Eugênio",
+      "tipo_documento": "professor",
+      "curso": "Ciência da Computação",
+      "ano_vigencia": 2026,
+      "local_path": "app/data/pdfs/professores/Alisson Eugênio.pdf",
+      "public_url": "http://lattes.cnpq.br/4109199900315432",
+      "tags": ["ciencia-da-computacao", "professor"]
     }
   ]
 }
