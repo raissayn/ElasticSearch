@@ -59,7 +59,44 @@ Antes de começar, certifique-se de ter instalado:
 
 ---
 
-### 2️⃣ Rodando o Frontend (Vite + React)
+### 2️⃣ Ingestão de Documentos (Indexando no Elasticsearch)
+
+Para que a busca semântica funcione, os documentos PDF localizados na pasta [backend/app/data/pdfs](file:///C:/Users/vinic/code/codeW/UniSearch/ElasticSearch/backend/app/data/pdfs) precisam ser processados e indexados no Elasticsearch. Você pode fazer isso de duas formas:
+
+#### Opção A: Pelo Docker (Mais fácil)
+Com os contêineres rodando, execute o comando abaixo na **raiz** do projeto:
+```bash
+docker compose exec api python scripts/ingest_pdfs.py --dir app/data/pdfs
+```
+> [!NOTE]
+> Se você adicionar ou atualizar arquivos PDF no seu computador local, precisará reconstruir a imagem do container (`docker compose build api`) antes de executar o script acima para atualizar o conteúdo interno.
+
+#### Opção B: Localmente (Recomendado para desenvolvimento ativo)
+1. Acesse a pasta do backend:
+   ```bash
+   cd backend
+   ```
+2. Ative o ambiente virtual (venv):
+   *   **Windows (PowerShell):**
+       ```powershell
+       .\venv\Scripts\Activate.ps1
+       ```
+   *   **Linux / macOS:**
+       ```bash
+       source venv/bin/activate
+       ```
+3. Garanta que as dependências do Python estejam instaladas:
+   ```bash
+   pip install -r requirements.txt
+   ```
+4. Execute o script de indexação automática:
+   ```bash
+   python scripts/ingest_pdfs.py --dir app/data/pdfs
+   ```
+
+---
+
+### 3️⃣ Rodando o Frontend (Vite + React)
 
 1. No terminal, acesse a pasta do frontend:
    ```bash
