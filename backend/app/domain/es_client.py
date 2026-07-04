@@ -355,7 +355,7 @@ class EsClient:
                 "type": "unified",
                 "fields": {
                     "conteudo": {"fragment_size": 250, "number_of_fragments": 1},
-                    "ementa": {"fragment_size": 250, "number_of_fragments": 1},
+                    "ementa": {"number_of_fragments": 0},
                     "nome_disciplina": {"number_of_fragments": 0},
                     "titulo_documento": {"number_of_fragments": 0},
                     "titulo_secao": {"number_of_fragments": 0}
