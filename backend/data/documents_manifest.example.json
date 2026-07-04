@@ -212,6 +212,20 @@
         "cd",
         "professores"
       ]
+    },
+    {
+      "source_id": "prof-angela-moreno",
+      "title": "Ângela Leite Moreno",
+      "tipo_documento": "professor",
+      "curso": "Ciência da Computação",
+      "ano_vigencia": 2026,
+      "local_path": "app/data/pdfs/professores/angela_moreno.pdf",
+      "public_url": "http://lattes.cnpq.br/1234567890",
+      "tags": [
+        "ciencia-da-computacao",
+        "professor",
+        "matematica"
+      ]
     }
   ]
 }
