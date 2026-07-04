@@ -5,6 +5,7 @@ import { vi, afterEach, beforeAll } from 'vitest';
 import HomePage from './HomePage';
 import { SearchProvider } from '../contexts/SearchContext';
 import { ThemeProvider } from '../contexts/ThemeContext';
+import { SavedItemsProvider } from '../contexts/SavedItemsContext';
 
 beforeAll(() => {
   Object.defineProperty(window, 'matchMedia', {
@@ -25,11 +26,13 @@ beforeAll(() => {
 const renderHome = () =>
   render(
     <ThemeProvider>
-      <SearchProvider>
-        <MemoryRouter>
-          <HomePage />
-        </MemoryRouter>
-      </SearchProvider>
+      <SavedItemsProvider>
+        <SearchProvider>
+          <MemoryRouter>
+            <HomePage />
+          </MemoryRouter>
+        </SearchProvider>
+      </SavedItemsProvider>
     </ThemeProvider>
   );
 

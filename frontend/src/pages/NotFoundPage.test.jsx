@@ -4,6 +4,7 @@ import { vi, beforeAll } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
 import NotFoundPage from './NotFoundPage';
 import { ThemeProvider } from '../contexts/ThemeContext';
+import { SavedItemsProvider } from '../contexts/SavedItemsContext';
 
 beforeAll(() => {
   Object.defineProperty(window, 'matchMedia', {
@@ -24,9 +25,11 @@ beforeAll(() => {
 const renderNotFound = (initialEntries = ['/pagina-inexistente']) =>
   render(
     <ThemeProvider>
-      <MemoryRouter initialEntries={initialEntries}>
-        <NotFoundPage />
-      </MemoryRouter>
+      <SavedItemsProvider>
+        <MemoryRouter initialEntries={initialEntries}>
+          <NotFoundPage />
+        </MemoryRouter>
+      </SavedItemsProvider>
     </ThemeProvider>
   );
 
