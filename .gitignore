@@ -1,4 +1,6 @@
 .agents/
+.context/
+AGENTS.md
 docs/
 skills-lock.json
 venv/
