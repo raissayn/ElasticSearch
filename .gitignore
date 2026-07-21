@@ -6,3 +6,8 @@ venv/
 .venv/
 
 __pycache__/
+
+# Environment files
+.env
+.env.*
+!.env.example
