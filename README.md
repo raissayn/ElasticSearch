@@ -161,6 +161,15 @@ docker compose exec api python scripts/ingest_pdfs.py --manifest data/documents_
 
 ---
 
+## 👥 Desenvolvedores
+
+Projeto desenvolvido por:
+* **Raissa Nunes Peret**
+* **Vinicius Ribeiro da Silva do Carmo**
+
+---
+
 ## 🤝 Contribuição
 
-Gostou do projeto ou quer adicionar novos documentos à base? Fique à vontade para abrir uma issue ou enviar um pull request!
+Gostou do projeto ou quer adicionar novos documentos ou features à base? Fique à vontade para abrir uma issue ou enviar um pull request!
+
