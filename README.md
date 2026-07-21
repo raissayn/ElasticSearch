@@ -171,5 +171,5 @@ Projeto desenvolvido por:
 
 ## 🤝 Contribuição
 
-Gostou do projeto ou quer adicionar novos documentos ou features à base? Fique à vontade para abrir uma issue ou enviar um pull request!
+Gostou do projeto ou quer adicionar novas features? Fique à vontade para abrir uma issue ou enviar um pull request!
 
