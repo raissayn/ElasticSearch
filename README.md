@@ -45,7 +45,22 @@ Antes de começar, certifique-se de ter instalado:
 
 ---
 
-### 1️⃣ Subindo o Backend & Elasticsearch (Docker)
+### 1️⃣ Configurando as Variáveis de Ambiente
+
+Antes de subir os serviços, crie seu arquivo local de variáveis de ambiente a partir do exemplo versionado:
+
+```bash
+cp .env.example .env
+```
+
+Depois, edite o arquivo `.env` e substitua os placeholders pelos valores do seu ambiente, como `ELASTIC_PASSWORD` e `KIBANA_PASSWORD`.
+
+> [!IMPORTANT]
+> O arquivo `.env` contém credenciais e configurações locais, por isso não deve ser commitado. Use sempre o `.env.example` como referência para saber quais variáveis precisam existir.
+
+---
+
+### 2️⃣ Subindo o Backend & Elasticsearch (Docker)
 
 1. Abra o **Docker Desktop** na sua máquina para garantir que o serviço de contêineres está rodando.
 2. No seu terminal, acesse a pasta raiz do projeto e execute:
@@ -59,7 +74,7 @@ Antes de começar, certifique-se de ter instalado:
 
 ---
 
-### 2️⃣ Ingestão de Documentos (Indexando no Elasticsearch)
+### 3️⃣ Ingestão de Documentos (Indexando no Elasticsearch)
 
 Para que a busca semântica funcione, os documentos PDF localizados na pasta [backend/app/data/pdfs](file:///C:/Users/vinic/code/codeW/UniSearch/ElasticSearch/backend/app/data/pdfs) precisam ser processados e indexados no Elasticsearch. O processo usa um **manifest** (`backend/data/documents_manifest.example.json`) que mapeia cada PDF ao seu `source_id`, título e URL pública oficial (ex.: do portal da UNIFAL), garantindo que os links "Ver documento" apontem para o local correto.
 
@@ -120,7 +135,7 @@ docker compose exec api python scripts/ingest_pdfs.py --manifest data/documents_
 
 ---
 
-### 3️⃣ Rodando o Frontend (Vite + React)
+### 4️⃣ Rodando o Frontend (Vite + React)
 
 1. No terminal, acesse a pasta do frontend:
    ```bash
